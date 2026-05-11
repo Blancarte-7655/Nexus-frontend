@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS — Perfil del Agente</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Barlow+Condensed:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+  <link rel="stylesheet" href="src/css/styles.css">
+  <script>(function(){const t=sessionStorage.getItem('nexus_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
+</head>
+<body>
+  <div id="nav-container"></div>
+
+  <div class="page-hero">
+    <div class="hero-tag">MÓDULO DE AGENTE</div>
+    <div class="ph-title">Perfil del <span>Agente</span></div>
+    <div class="ph-sub" id="ph-sub"></div>
+  </div>
+
+  <div class="content-area" id="perfil-content"></div>
+
+  <script src="src/js/app.js"></script>
+  <script>
+    initNav('perfil');
+    const user=window._currentUser;
+    if(!user){window.location.href='login.html';}
+
+    document.getElementById('ph-sub').textContent=`${user.nombre} · ${user.rango} · ${user.dpto}`;
+
+    // Datos de sesión
+    function getNots(){return JSON.parse(sessionStorage.getItem('nexus_notas')||'[]');}
+    function getPistas(){return JSON.parse(sessionStorage.getItem('nexus_pistas')||'[]');}
+    function saveNots(d){sessionStorage.setItem('nexus_notas',JSON.stringify(d));}
+    function savePistas(d){sessionStorage.setItem('nexus_pistas',JSON.stringify(d));}
+
+    // Casos del agente
+    const detAgent=DETECTIVES.find(d=>d.user===user.username);
+    const casosAgente=detAgent?detAgent.casos_ids.map(cid=>CASOS.find(c=>c.id===cid)).filter(Boolean):[];
+
+    function renderNots(){
+      const notas=getNots();
+      const el=document.getElementById('notas-lista');
+      if(!el)return;
+      el.innerHTML=notas.length
+        ?notas.map((n,i)=>`<div class="nota-item"><button class="nota-del" onclick="borrarNota(${i})" title="Eliminar"><i class="ti ti-x" aria-hidden="true"></i></button><div class="nota-fecha">${n.fecha}</div><div class="nota-texto">${n.texto}</div></div>`).join('')
+        :`<div style="font-size:.58rem;color:var(--text3);font-family:var(--mono);padding:.5rem 0;">// sin notas registradas en esta sesión</div>`;
+    }
+
+    function renderPistas(){
+      const pistas=getPistas();
+      const el=document.getElementById('pistas-lista');
+      if(!el)return;
+      el.innerHTML=pistas.length
+        ?pistas.map((p,i)=>`<div class="pista-item"><button class="nota-del" onclick="borrarPista(${i})" title="Eliminar"><i class="ti ti-x" aria-hidden="true"></i></button><div class="pista-texto">${p.texto}</div><div class="pista-caso">// caso: ${p.caso}</div></div>`).join('')
+        :`<div style="font-size:.58rem;color:var(--text3);font-family:var(--mono);padding:.5rem 0;">// sin pistas registradas</div>`;
+    }
+
+    function borrarNota(i){const n=getNots();n.splice(i,1);saveNots(n);renderNots();}
+    function borrarPista(i){const p=getPistas();p.splice(i,1);savePistas(p);renderPistas();}
+
+    function agregarNota(){
+      const t=document.getElementById('nueva-nota').value.trim();
+      if(!t)return;
+      const notas=getNots();
+      const fecha=new Date().toLocaleString('es-MX',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+      notas.unshift({texto:t,fecha});
+      saveNots(notas);
+      document.getElementById('nueva-nota').value='';
+      renderNots();
+    }
+
+    function agregarPista(){
+      const t=document.getElementById('nueva-pista').value.trim();
+      const c=document.getElementById('pista-caso').value.trim()||'Sin caso asignado';
+      if(!t)return;
+      const pistas=getPistas();
+      pistas.unshift({texto:t,caso:c});
+      savePistas(pistas);
+      document.getElementById('nueva-pista').value='';
+      document.getElementById('pista-caso').value='';
+      renderPistas();
+    }
+
+    const abiertos=CASOS.filter(c=>c.estado==='Abierto'||c.estado==='En investigación').length;
+    const cerrados=CASOS.filter(c=>c.estado==='Cerrado').length;
+
+    document.getElementById('perfil-content').innerHTML=`
+      <!-- HERO CARD -->
+      <div class="perfil-hero-card">
+        <div class="perfil-big-avatar">${ini(user.nombre)}</div>
+        <div class="perfil-info-main" style="flex:1;">
+          <div class="perfil-nombre">${user.nombre}</div>
+          <div class="perfil-cargo">${user.rango} &nbsp;·&nbsp; ${user.rol}</div>
+          <div class="perfil-dpto">${user.dpto} &nbsp;·&nbsp; @${user.username}</div>
+          <div class="perfil-stats">
+            <div class="pstat"><div class="pstat-num">${casosAgente.length}</div><div class="pstat-lbl">Casos a cargo</div></div>
+            <div class="pstat"><div class="pstat-num">${abiertos}</div><div class="pstat-lbl">Activos sistema</div></div>
+            <div class="pstat"><div class="pstat-num">${cerrados}</div><div class="pstat-lbl">Cerrados</div></div>
+          </div>
+        </div>
+        <!-- Logo NEXUS en perfil hero -->
+        <div style="flex-shrink:0;opacity:.15;pointer-events:none;">
+          <img src="src/imagenes/logo.jpeg" style="width:100px;height:100px;object-fit:contain;" alt="">
+        </div>
+      </div>
+
+      <!-- GRID PRINCIPAL -->
+      <div class="perfil-grid">
+
+        <!-- COL IZQUIERDA -->
+        <div>
+          <!-- DATOS DEL AGENTE -->
+          <div class="panel-card" style="margin-bottom:.8rem;">
+            <div class="panel-head"><span class="panel-title"><i class="ti ti-id-badge" aria-hidden="true"></i> Datos del Agente</span></div>
+            <div class="panel-body">
+              <div class="perfil-info-row"><span class="perfil-info-lbl">Nombre completo</span><span class="perfil-info-val">${user.nombre}</span></div>
+              <div class="perfil-info-row"><span class="perfil-info-lbl">Usuario</span><span class="perfil-info-val" style="font-family:var(--mono);">@${user.username}</span></div>
+              <div class="perfil-info-row"><span class="perfil-info-lbl">Rango</span><span class="perfil-info-val">${user.rango}</span></div>
+              <div class="perfil-info-row"><span class="perfil-info-lbl">Rol en el sistema</span><span class="perfil-info-val">${user.rol}</span></div>
+              <div class="perfil-info-row"><span class="perfil-info-lbl">Departamento</span><span class="perfil-info-val">${user.dpto}</span></div>
+              <div class="perfil-info-row"><span class="perfil-info-lbl">Estación</span><span class="perfil-info-val">Central GDL</span></div>
+              <div class="perfil-info-row"><span class="perfil-info-lbl">División</span><span class="perfil-info-val">Metropolitana Jalisco</span></div>
+            </div>
+          </div>
+
+          <!-- CASOS A CARGO -->
+          <div class="panel-card">
+            <div class="panel-head"><span class="panel-title"><i class="ti ti-folder" aria-hidden="true"></i> Casos Asignados</span><span class="panel-count">${casosAgente.length}</span></div>
+            <div class="panel-body">
+              ${casosAgente.length
+                ? casosAgente.map(c=>`
+                  <div class="case-row" onclick="abrirCaso(${c.id})">
+                    <span class="case-num">C-${padId(c.id)}</span>
+                    <span class="case-name">${c.asunto}</span>
+                    ${badge(c.estado)}
+                  </div>`).join('')
+                : `<div style="font-size:.58rem;color:var(--text3);font-family:var(--mono);">// sin casos asignados a tu usuario</div>`}
+            </div>
+          </div>
+        </div>
+
+        <!-- COL DERECHA -->
+        <div>
+
+          <!-- NOTAS PERSONALES -->
+          <div class="panel-card" style="margin-bottom:.8rem;">
+            <div class="panel-head"><span class="panel-title"><i class="ti ti-notes" aria-hidden="true"></i> Notas Personales</span></div>
+            <div class="panel-body">
+              <textarea class="nota-input" id="nueva-nota" rows="3" placeholder="// escribe una nota de investigación..."></textarea>
+              <button class="add-btn" onclick="agregarNota()"><i class="ti ti-plus" aria-hidden="true"></i> Agregar nota</button>
+              <div style="margin-top:.8rem;" id="notas-lista"></div>
+            </div>
+          </div>
+
+          <!-- PISTAS ACTIVAS -->
+          <div class="panel-card">
+            <div class="panel-head"><span class="panel-title"><i class="ti ti-bulb" aria-hidden="true"></i> Pistas Activas</span></div>
+            <div class="panel-body">
+              <textarea class="nota-input" id="nueva-pista" rows="2" placeholder="// descripción de la pista..."></textarea>
+              <input class="nota-input" id="pista-caso" placeholder="// caso relacionado (ej: Callejón 45)" style="margin-bottom:.4rem;">
+              <button class="add-btn" onclick="agregarPista()"><i class="ti ti-plus" aria-hidden="true"></i> Agregar pista</button>
+              <div style="margin-top:.8rem;" id="pistas-lista"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>`;
+
+    // Renderizar listas después de insertar el HTML
+    renderNots();
+    renderPistas();
+  </script>
+</body>
+</html>

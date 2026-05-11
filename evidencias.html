@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS — Bóveda de Evidencias</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Barlow+Condensed:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+  <link rel="stylesheet" href="src/css/styles.css">
+  <script>(function(){const t=sessionStorage.getItem('nexus_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
+  <style>
+    .grupo-body{margin-bottom:.9rem;}
+    .grupo-body .evid-item{margin-left:1rem;}
+  </style>
+</head>
+<body>
+  <div id="nav-container"></div>
+  <div class="page-hero">
+    <div class="hero-tag">// CADENA DE CUSTODIA</div>
+    <div class="ph-title">Bóveda de <span>Evidencias</span></div>
+    <div class="ph-sub" id="ph-sub"></div>
+  </div>
+  <div class="content-area">
+    <div class="toolbar">
+      <div class="search-wrap"><i class="ti ti-search search-icon" aria-hidden="true"></i><input class="search-box" id="evid-search" placeholder="// buscar descripción, tipo o caso..." oninput="renderLista()"></div>
+      <button class="flt-btn act" onclick="setFiltro('todos',this)">Todos</button>
+      <button class="flt-btn" onclick="setFiltro('Fotografía',this)">Fotos</button>
+      <button class="flt-btn" onclick="setFiltro('Video',this)">Videos</button>
+      <button class="flt-btn" onclick="setFiltro('Digital',this)">Digitales</button>
+      <button class="flt-btn" onclick="setFiltro('Documento',this)">Docs</button>
+      <button class="flt-btn" onclick="setFiltro('Objeto',this)">Objetos</button>
+      <div style="display:flex;gap:.4rem;">
+        <button class="vista-btn act" onclick="setVista('lista',this)"><i class="ti ti-list" aria-hidden="true"></i> Lista</button>
+        <button class="vista-btn" onclick="setVista('caso',this)"><i class="ti ti-folder" aria-hidden="true"></i> Por caso</button>
+      </div>
+    </div>
+    <div id="evid-container"></div>
+  </div>
+  <script src="src/js/app.js"></script>
+  <script>
+    initNav('evidencias');
+    document.getElementById('ph-sub').textContent=`${EVIDENCIAS.length} registros · Acceso restringido · División Metropolitana GDL`;
+    let filtroTipo='todos',vista='lista';
+    function setFiltro(f,btn){filtroTipo=f;document.querySelectorAll('.flt-btn').forEach(b=>b.classList.remove('act'));btn.classList.add('act');renderLista();}
+    function setVista(v,btn){vista=v;document.querySelectorAll('.vista-btn').forEach(b=>b.classList.remove('act'));btn.classList.add('act');renderLista();}
+    function evRow(e){return`<div class="evid-item"><div class="evid-icon"><i class="ti ${evIconClass(e.tipo)}" aria-hidden="true"></i></div><div style="flex:1;"><div class="evid-type">${e.tipo}</div><div class="evid-desc">${e.desc}</div>${e.ruta?`<div class="evid-path">${e.ruta}</div>`:`<div class="evid-nofile">// evidencia física</div>`}</div><div class="evid-right"><div class="evid-caso">C-${padId(e.caso)}</div><div class="evid-det">${e.det}</div><div class="evid-id">EV-${padId(e.id,4)}</div><div style="font-size:.44rem;color:var(--text3);font-family:var(--mono);margin-top:.1rem;">${e.fecha}</div></div></div>`;}
+    function renderLista(){
+      const q=document.getElementById('evid-search').value.toLowerCase();
+      let lista=EVIDENCIAS;
+      if(filtroTipo!=='todos')lista=lista.filter(e=>e.tipo===filtroTipo);
+      if(q)lista=lista.filter(e=>e.desc.toLowerCase().includes(q)||e.tipo.toLowerCase().includes(q)||String(e.caso).includes(q)||e.det.toLowerCase().includes(q));
+      const cont=document.getElementById('evid-container');
+      if(!lista.length){cont.innerHTML=`<div style="text-align:center;padding:3rem;color:var(--text3);font-family:var(--mono);">// sin resultados</div>`;return;}
+      if(vista==='lista'){cont.innerHTML=`<div class="evid-list">${lista.map(evRow).join('')}</div>`;return;}
+      const grupos={};lista.forEach(e=>{if(!grupos[e.caso])grupos[e.caso]=[];grupos[e.caso].push(e);});
+      const ids=Object.keys(grupos).map(Number).sort((a,b)=>a-b);
+      cont.innerHTML=ids.map(cid=>{const caso=CASOS.find(c=>c.id===cid);const evids=grupos[cid];
+        return`<div class="grupo-body"><div class="grupo-header" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'flex':'none';this.nextElementSibling.style.flexDirection='column'"><div><span style="font-family:var(--mono);font-size:.5rem;color:var(--text3);margin-right:.5rem;">C-${padId(cid)}</span><span class="grupo-title">${caso?caso.asunto:'Caso desconocido'}</span> ${caso?badge(caso.estado):''}</div><div style="display:flex;align-items:center;gap:.8rem;"><span class="grupo-count">${evids.length} evidencia(s)</span><i class="ti ti-chevron-down" style="color:var(--cyan);font-size:.8rem;" aria-hidden="true"></i></div></div><div class="evid-list" style="padding-left:.5rem;">${evids.map(evRow).join('')}</div></div>`;
+      }).join('');
+    }
+    renderLista();
+  </script>
+</body>
+</html>

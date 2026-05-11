@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Barlow+Condensed:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+  <link rel="stylesheet" href="src/css/styles.css">
+  <script>(function(){const t=sessionStorage.getItem('nexus_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
+  <style>
+    .dash-hero{position:relative;overflow:hidden;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:stretch;min-height:420px;transition:background .3s;}
+    .dash-hero-grid{position:absolute;inset:0;opacity:.035;background-image:repeating-linear-gradient(90deg,var(--cyan) 0,var(--cyan) 1px,transparent 1px,transparent 55px),repeating-linear-gradient(0deg,var(--cyan) 0,var(--cyan) 1px,transparent 1px,transparent 55px);pointer-events:none;z-index:0;animation:gridShift 30s linear infinite;}
+    .dash-hero-glow{position:absolute;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(0,200,224,.07) 0%,transparent 55%),radial-gradient(ellipse at 80% 20%,rgba(245,158,11,.04) 0%,transparent 40%);pointer-events:none;z-index:0;}
+    .dash-hero-left{flex:1;padding:2.2rem 2rem 1.8rem;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:2;}
+    .dash-hero-right{width:260px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:1.5rem;position:relative;z-index:2;}
+    .hero-pill{font-size:.52rem;border:1px solid var(--cyan3);color:var(--cyan);padding:.22rem .8rem;letter-spacing:.1em;font-family:var(--mono);}
+    .scan-line{position:absolute;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,200,224,.2),transparent);z-index:1;pointer-events:none;animation:scanMove 8s linear infinite;}
+    @keyframes gridShift{0%{background-position:0 0;}100%{background-position:55px 55px;}}
+    @keyframes scanMove{0%{top:-2px;opacity:0;}5%{opacity:1;}95%{opacity:1;}100%{top:100%;opacity:0;}}
+    @media(max-width:900px){.dash-hero{flex-direction:column;min-height:auto;}.dash-hero-right{width:100%;padding:0 1rem 1.5rem;}}
+    @media(max-width:600px){.dash-hero-left{padding:1.5rem 1rem 1rem;}}
+  </style>
+</head>
+<body>
+  <div id="nav-container"></div>
+
+  <div class="dash-hero">
+    <!-- IMAGEN FONDO: <img src="src/imagenes/dashboard-bg.jpg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.1;pointer-events:none;z-index:0;"> -->
+    <div class="dash-hero-grid"></div>
+    <div class="dash-hero-glow"></div>
+    <div class="scan-line"></div>
+
+    <div class="dash-hero-left">
+      <div class="hero-tag">BIENVENIDO AL SISTEMA OPERATIVO · NEXUS</div>
+      <div style="font-family:var(--title);font-size:2.6rem;font-weight:700;color:#fff;line-height:1.05;text-transform:uppercase;letter-spacing:.04em;animation:fadeInLeft .6s .2s both;">
+        CRIME<br>RECORD<br><span style="color:var(--cyan);">SYSTEM</span>
+      </div>
+      <div style="font-size:.65rem;color:var(--text2);margin-top:.8rem;line-height:1.7;max-width:380px;font-family:var(--cond);font-weight:300;animation:fadeInLeft .6s .35s both;">Plataforma institucional para la gestión de casos criminales, detectives y evidencias de la Dirección de Seguridad Pública.</div>
+      <div style="display:flex;gap:.5rem;margin-top:1rem;flex-wrap:wrap;animation:fadeInLeft .6s .5s both;">
+        <span class="hero-pill" id="pill-dets"></span>
+        <span class="hero-pill" id="pill-casos"></span>
+        <span class="hero-pill">Jalisco · GDL</span>
+      </div>
+    </div>
+
+    <div class="dash-hero-right">
+      <div class="chart-card" style="width:100%;">
+        <div class="chart-title">ESTADO DE CASOS</div>
+        <div class="chart-wrap">
+          <canvas id="donaChart" width="120" height="120"></canvas>
+          <div class="chart-center"><div class="chart-center-num" id="chart-total"></div><div class="chart-center-sub">CASOS</div></div>
+        </div>
+        <div class="legend-row"><div class="legend-dot" style="background:#1976d2;"></div><span class="legend-lbl">INVESTIGACIÓN</span><span class="legend-val" id="leg-inv"></span></div>
+        <div class="legend-row"><div class="legend-dot" style="background:#f59e0b;"></div><span class="legend-lbl">ABIERTOS</span><span class="legend-val" id="leg-open"></span></div>
+        <div class="legend-row"><div class="legend-dot" style="background:#22c55e;"></div><span class="legend-lbl">CERRADOS</span><span class="legend-val" id="leg-closed"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card s-cyan"><i class="ti ti-folder stat-icon" aria-hidden="true"></i><div><div class="stat-num" id="m-total"></div><div class="stat-lbl">Casos Totales</div></div></div>
+    <div class="stat-card s-amber"><i class="ti ti-clock stat-icon" aria-hidden="true"></i><div><div class="stat-num" id="m-inv"></div><div class="stat-lbl">En Investigación</div></div></div>
+    <div class="stat-card s-green"><i class="ti ti-id-badge stat-icon" aria-hidden="true"></i><div><div class="stat-num" id="m-dets"></div><div class="stat-lbl">Detectives Activos</div></div></div>
+    <div class="stat-card s-red"><i class="ti ti-alert-triangle stat-icon" aria-hidden="true"></i><div><div class="stat-num" id="m-sosp"></div><div class="stat-lbl">Sospechosos Activos</div></div></div>
+  </div>
+
+  <div class="content-area">
+    <div class="section-label">ACCESOS DIRECTOS</div>
+    <div class="accesos-grid">
+      <a href="dashboard.html" class="acc-card"><div class="acc-icon"><i class="ti ti-layout-dashboard" aria-hidden="true"></i></div><div class="acc-label">Dashboard</div><div class="acc-sub">Resumen general</div></a>
+      <a href="casos.html"      class="acc-card"><div class="acc-icon"><i class="ti ti-folder" aria-hidden="true"></i></div><div class="acc-label">Casos</div><div class="acc-sub">Ver todos los casos</div></a>
+      <a href="detectives.html" class="acc-card"><div class="acc-icon"><i class="ti ti-id-badge" aria-hidden="true"></i></div><div class="acc-label">Detectives</div><div class="acc-sub">Personal activo</div></a>
+      <a href="evidencias.html" class="acc-card"><div class="acc-icon"><i class="ti ti-archive" aria-hidden="true"></i></div><div class="acc-label">Evidencias</div><div class="acc-sub">Cadena de custodia</div></a>
+      <a href="criminales.html" class="acc-card"><div class="acc-icon"><i class="ti ti-users" aria-hidden="true"></i></div><div class="acc-label">Criminales</div><div class="acc-sub">Expedientes</div></a>
+    </div>
+    <div class="grid-2" style="margin-top:1rem;">
+      <div class="panel-card">
+        <div class="panel-head"><span class="panel-title"><i class="ti ti-folder-open" aria-hidden="true"></i> Casos Recientes</span><span class="panel-count" id="casos-count"></span></div>
+        <div class="panel-body" id="casos-lista"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.6rem;">
+        <div class="panel-card" style="flex:1;">
+          <div class="panel-head"><span class="panel-title"><i class="ti ti-id-badge" aria-hidden="true"></i> Detectives</span><span class="panel-count" id="det-count"></span></div>
+          <div class="panel-body" id="det-lista"></div>
+        </div>
+        <div class="panel-card">
+          <div class="panel-head"><span class="panel-title"><i class="ti ti-alert-triangle" aria-hidden="true"></i> Sospechosos</span></div>
+          <div class="panel-body" id="sosp-lista"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="src/js/app.js"></script>
+  <script>
+    initNav('dashboard');
+    const open=CASOS.filter(c=>c.estado==='Abierto').length;
+    const inv=CASOS.filter(c=>c.estado==='En investigación').length;
+    const closed=CASOS.filter(c=>c.estado==='Cerrado').length;
+    const sosp=CRIMINALES.filter(c=>c.activo).length;
+    document.getElementById('m-total').textContent=CASOS.length;
+    document.getElementById('m-inv').textContent=inv;
+    document.getElementById('m-dets').textContent=DETECTIVES.length;
+    document.getElementById('m-sosp').textContent=sosp;
+    document.getElementById('chart-total').textContent=CASOS.length;
+    document.getElementById('leg-inv').textContent=inv;
+    document.getElementById('leg-open').textContent=open;
+    document.getElementById('leg-closed').textContent=closed;
+    document.getElementById('pill-dets').textContent=DETECTIVES.length+' Detectives en servicio';
+    document.getElementById('pill-casos').textContent=CASOS.length+' Casos activos';
+    document.getElementById('casos-count').textContent=CASOS.length+' registros';
+    document.getElementById('det-count').textContent=DETECTIVES.length;
+
+    new Chart(document.getElementById('donaChart').getContext('2d'),{
+      type:'doughnut',
+      data:{datasets:[{data:[inv,open,closed],backgroundColor:['#1976d2','#f59e0b','#22c55e'],borderWidth:0,hoverOffset:6}]},
+      options:{cutout:'72%',plugins:{legend:{display:false},tooltip:{enabled:true,callbacks:{label:ctx=>' '+ctx.raw+' casos'}}},animation:{animateRotate:true,duration:1200,easing:'easeOutQuart'}}
+    });
+
+    document.getElementById('casos-lista').innerHTML=CASOS.slice(-6).reverse().map(c=>`<div class="case-row" onclick="abrirCaso(${c.id})"><span class="case-num">C-${padId(c.id)}</span><span class="case-name">${c.asunto}</span>${badge(c.estado)}</div>`).join('');
+    document.getElementById('det-lista').innerHTML=DETECTIVES.slice(0,5).map(d=>`<div class="det-row" style="cursor:pointer;" onclick="abrirDetective(${d.id})"><div class="det-av">${ini(d.nombre)}</div><div style="flex:1"><div class="det-nm">${d.nombre}</div><div class="det-rk">${d.rango}</div></div><span class="det-dp">${d.dpto.substring(0,9)}</span></div>`).join('');
+    document.getElementById('sosp-lista').innerHTML=CRIMINALES.filter(c=>c.activo).map(c=>`<div class="det-row" style="cursor:pointer;" onclick="abrirCriminal(${c.id})"><div style="width:7px;height:7px;border-radius:50%;background:var(--amber);flex-shrink:0;"></div><div style="flex:1"><div class="det-nm" style="color:#fbbf24;">${c.alias}</div><div class="det-rk">${c.nombre}</div></div><span class="pill pill-act">Activo</span></div>`).join('');
+  </script>
+</body>
+</html>
