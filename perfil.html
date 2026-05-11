@@ -1,14 +1,204 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NEXUS — Perfil del Agente</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Barlow+Condensed:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Barlow+Condensed:wght@300;400;600;700&family=Share+Tech+Mono&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
   <link rel="stylesheet" href="src/css/styles.css">
-  <script>(function(){const t=sessionStorage.getItem('nexus_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
+  <script>(function () { const t = sessionStorage.getItem('nexus_theme') || 'dark'; document.documentElement.setAttribute('data-theme', t); })();</script>
+  <style>
+    .progress-wrap {
+      margin-top: .55rem;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: .3rem;
+    }
+
+    .progress-label {
+      font-size: .54rem;
+      color: var(--text2);
+      letter-spacing: .08em;
+    }
+
+    .progress-pct {
+      font-family: var(--mono);
+      font-size: .58rem;
+      color: var(--cyan);
+      font-weight: 700;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 5px;
+      background: var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--cyan3), var(--cyan));
+      transition: width 1s ease;
+      position: relative;
+    }
+
+    .progress-bar-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 20px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .25));
+      animation: shimmerBar 2s linear infinite;
+    }
+
+    @keyframes shimmerBar {
+      0% {
+        right: 100%;
+      }
+
+      100% {
+        right: -20px;
+      }
+    }
+
+    .progress-bar-fill.cerrado {
+      background: linear-gradient(90deg, #1a7a3e, #22c55e);
+    }
+
+    .progress-bar-fill.abierto {
+      background: linear-gradient(90deg, rgba(239, 68, 68, .5), #ef4444);
+    }
+
+    .caso-progress-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--cyan3);
+      padding: .85rem 1rem;
+      margin-bottom: .55rem;
+      transition: all .25s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .caso-progress-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      opacity: 0;
+      transition: opacity .25s;
+    }
+
+    .caso-progress-card:hover {
+      border-left-color: var(--cyan);
+      transform: translateX(3px);
+    }
+
+    .caso-progress-card:hover::before {
+      opacity: 1;
+    }
+
+    .caso-progress-card.estado-cerrado {
+      border-left-color: #22c55e;
+    }
+
+    .caso-progress-card.estado-abierto {
+      border-left-color: #ef4444;
+    }
+
+    .caso-progress-card.estado-inv {
+      border-left-color: #f59e0b;
+    }
+
+    .caso-card-id {
+      font-family: var(--mono);
+      font-size: .52rem;
+      color: var(--text3);
+      margin-bottom: .15rem;
+    }
+
+    .caso-card-title {
+      font-family: var(--title);
+      font-size: .88rem;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: .04em;
+    }
+
+    .caso-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: .5rem;
+    }
+
+    .caso-card-meta {
+      display: flex;
+      gap: .8rem;
+      margin-top: .45rem;
+      flex-wrap: wrap;
+    }
+
+    .caso-card-meta-item {
+      display: flex;
+      align-items: center;
+      gap: .28rem;
+      font-size: .54rem;
+      color: var(--text2);
+    }
+
+    .caso-card-meta-item i {
+      color: var(--cyan3);
+      font-size: .75rem;
+    }
+
+    .avance-resumen {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: .5rem;
+      margin-bottom: .9rem;
+    }
+
+    .avance-mini {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: .65rem .75rem;
+      text-align: center;
+    }
+
+    .avance-mini-num {
+      font-family: var(--title);
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .avance-mini-lbl {
+      font-size: .48rem;
+      color: var(--text3);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-top: .2rem;
+    }
+  </style>
 </head>
+
 <body>
   <div id="nav-container"></div>
 
@@ -18,158 +208,258 @@
     <div class="ph-sub" id="ph-sub"></div>
   </div>
 
-  <div class="content-area" id="perfil-content"></div>
+  <div class="content-area" id="perfil-content">
+    <div style="text-align:center;padding:3rem;color:var(--text3);font-family:var(--mono);font-size:.72rem;">
+      <div
+        style="width:24px;height:24px;border:2px solid var(--cyan3);border-top-color:var(--cyan);border-radius:50%;animation:spinSlow .8s linear infinite;margin:0 auto .8rem;">
+      </div>
+      // cargando perfil...
+    </div>
+  </div>
 
+  <script src="src/js/api.js"></script>
   <script src="src/js/app.js"></script>
   <script>
     initNav('perfil');
-    const user=window._currentUser;
-    if(!user){window.location.href='login.html';}
+    const user = window._currentUser;
+    if (!user) window.location.href = 'login.html';
+    document.getElementById('ph-sub').textContent = `${user.nombre} · ${user.rango} · ${user.dpto}`;
 
-    document.getElementById('ph-sub').textContent=`${user.nombre} · ${user.rango} · ${user.dpto}`;
+    /* ── Notas y pistas locales ── */
+    const getNots = () => JSON.parse(sessionStorage.getItem('nexus_notas') || '[]');
+    const getPistas = () => JSON.parse(sessionStorage.getItem('nexus_pistas') || '[]');
+    const saveNots = d => sessionStorage.setItem('nexus_notas', JSON.stringify(d));
+    const savePistas = d => sessionStorage.setItem('nexus_pistas', JSON.stringify(d));
 
-    // Datos de sesión
-    function getNots(){return JSON.parse(sessionStorage.getItem('nexus_notas')||'[]');}
-    function getPistas(){return JSON.parse(sessionStorage.getItem('nexus_pistas')||'[]');}
-    function saveNots(d){sessionStorage.setItem('nexus_notas',JSON.stringify(d));}
-    function savePistas(d){sessionStorage.setItem('nexus_pistas',JSON.stringify(d));}
-
-    // Casos del agente
-    const detAgent=DETECTIVES.find(d=>d.user===user.username);
-    const casosAgente=detAgent?detAgent.casos_ids.map(cid=>CASOS.find(c=>c.id===cid)).filter(Boolean):[];
-
-    function renderNots(){
-      const notas=getNots();
-      const el=document.getElementById('notas-lista');
-      if(!el)return;
-      el.innerHTML=notas.length
-        ?notas.map((n,i)=>`<div class="nota-item"><button class="nota-del" onclick="borrarNota(${i})" title="Eliminar"><i class="ti ti-x" aria-hidden="true"></i></button><div class="nota-fecha">${n.fecha}</div><div class="nota-texto">${n.texto}</div></div>`).join('')
-        :`<div style="font-size:.58rem;color:var(--text3);font-family:var(--mono);padding:.5rem 0;">// sin notas registradas en esta sesión</div>`;
+    function renderNots() {
+      const el = document.getElementById('notas-lista'); const notas = getNots(); if (!el) return;
+      el.innerHTML = notas.length ? notas.map((n, i) => `<div class="nota-item"><button class="nota-del" onclick="borrarNota(${i})" title="Eliminar"><i class="ti ti-x"></i></button><div class="nota-fecha">${n.fecha}</div><div class="nota-texto">${n.texto}</div></div>`).join('')
+        : `<div style="font-size:.58rem;color:var(--text3);font-family:var(--mono);padding:.4rem 0;">// sin notas en esta sesión</div>`;
+    }
+    function renderPistas() {
+      const el = document.getElementById('pistas-lista'); const pistas = getPistas(); if (!el) return;
+      el.innerHTML = pistas.length ? pistas.map((p, i) => `<div class="pista-item"><button class="nota-del" onclick="borrarPista(${i})" title="Eliminar"><i class="ti ti-x"></i></button><div class="pista-texto">${p.texto}</div><div class="pista-caso">// caso: ${p.caso}</div></div>`).join('')
+        : `<div style="font-size:.58rem;color:var(--text3);font-family:var(--mono);padding:.4rem 0;">// sin pistas registradas</div>`;
+    }
+    function borrarNota(i) { const n = getNots(); n.splice(i, 1); saveNots(n); renderNots(); }
+    function borrarPista(i) { const p = getPistas(); p.splice(i, 1); savePistas(p); renderPistas(); }
+    function agregarNota() {
+      const t = document.getElementById('nueva-nota').value.trim(); if (!t) return;
+      const notas = getNots();
+      const fecha = new Date().toLocaleString('es-MX', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+      notas.unshift({ texto: t, fecha }); saveNots(notas);
+      document.getElementById('nueva-nota').value = ''; renderNots();
+      const el = document.getElementById('stat-notas'); if (el) el.textContent = notas.length;
+    }
+    function agregarPista() {
+      const t = document.getElementById('nueva-pista').value.trim(); if (!t) return;
+      const c = document.getElementById('pista-caso').value.trim() || 'Sin caso asignado';
+      const pistas = getPistas(); pistas.unshift({ texto: t, caso: c }); savePistas(pistas);
+      document.getElementById('nueva-pista').value = ''; document.getElementById('pista-caso').value = ''; renderPistas();
     }
 
-    function renderPistas(){
-      const pistas=getPistas();
-      const el=document.getElementById('pistas-lista');
-      if(!el)return;
-      el.innerHTML=pistas.length
-        ?pistas.map((p,i)=>`<div class="pista-item"><button class="nota-del" onclick="borrarPista(${i})" title="Eliminar"><i class="ti ti-x" aria-hidden="true"></i></button><div class="pista-texto">${p.texto}</div><div class="pista-caso">// caso: ${p.caso}</div></div>`).join('')
-        :`<div style="font-size:.58rem;color:var(--text3);font-family:var(--mono);padding:.5rem 0;">// sin pistas registradas</div>`;
+    /* ── Progreso ── */
+    function calcularProgreso(estado) { return { 'Cerrado': 100, 'En investigación': 60, 'Abierto': 20 }[estado] ?? 20; }
+    function claseEstado(estado) { return { 'Cerrado': 'estado-cerrado', 'En investigación': 'estado-inv', 'Abierto': 'estado-abierto' }[estado] || ''; }
+    function claseBarra(estado) { return { 'Cerrado': 'cerrado', 'Abierto': 'abierto' }[estado] || ''; }
+
+    function animarBarras() {
+      document.querySelectorAll('.progress-bar-fill[data-target]').forEach(b => {
+        setTimeout(() => { b.style.width = b.getAttribute('data-target') + '%'; }, 120);
+      });
     }
 
-    function borrarNota(i){const n=getNots();n.splice(i,1);saveNots(n);renderNots();}
-    function borrarPista(i){const p=getPistas();p.splice(i,1);savePistas(p);renderPistas();}
-
-    function agregarNota(){
-      const t=document.getElementById('nueva-nota').value.trim();
-      if(!t)return;
-      const notas=getNots();
-      const fecha=new Date().toLocaleString('es-MX',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
-      notas.unshift({texto:t,fecha});
-      saveNots(notas);
-      document.getElementById('nueva-nota').value='';
-      renderNots();
-    }
-
-    function agregarPista(){
-      const t=document.getElementById('nueva-pista').value.trim();
-      const c=document.getElementById('pista-caso').value.trim()||'Sin caso asignado';
-      if(!t)return;
-      const pistas=getPistas();
-      pistas.unshift({texto:t,caso:c});
-      savePistas(pistas);
-      document.getElementById('nueva-pista').value='';
-      document.getElementById('pista-caso').value='';
-      renderPistas();
-    }
-
-    const abiertos=CASOS.filter(c=>c.estado==='Abierto'||c.estado==='En investigación').length;
-    const cerrados=CASOS.filter(c=>c.estado==='Cerrado').length;
-
-    document.getElementById('perfil-content').innerHTML=`
-      <!-- HERO CARD -->
-      <div class="perfil-hero-card">
-        <div class="perfil-big-avatar">${ini(user.nombre)}</div>
-        <div class="perfil-info-main" style="flex:1;">
-          <div class="perfil-nombre">${user.nombre}</div>
-          <div class="perfil-cargo">${user.rango} &nbsp;·&nbsp; ${user.rol}</div>
-          <div class="perfil-dpto">${user.dpto} &nbsp;·&nbsp; @${user.username}</div>
-          <div class="perfil-stats">
-            <div class="pstat"><div class="pstat-num">${casosAgente.length}</div><div class="pstat-lbl">Casos a cargo</div></div>
-            <div class="pstat"><div class="pstat-num">${abiertos}</div><div class="pstat-lbl">Activos sistema</div></div>
-            <div class="pstat"><div class="pstat-num">${cerrados}</div><div class="pstat-lbl">Cerrados</div></div>
-          </div>
+    function renderCasoCard(c) {
+      const pct = calcularProgreso(c.estado);
+      const dias = c.fecha_apertura ? Math.floor((Date.now() - new Date(c.fecha_apertura)) / 86400000) : '—';
+      return `<div class="caso-progress-card ${claseEstado(c.estado)}" onclick="abrirCasoPerfilAPI(${c.id_caso})">
+        <div class="caso-card-head">
+          <div><div class="caso-card-id">C-${padId(c.id_caso)}</div><div class="caso-card-title">${c.asunto}</div></div>
+          <div>${badge(c.estado)}</div>
         </div>
-        <!-- Logo NEXUS en perfil hero -->
-        <div style="flex-shrink:0;opacity:.15;pointer-events:none;">
-          <img src="src/imagenes/logo.jpeg" style="width:100px;height:100px;object-fit:contain;" alt="">
+        <div class="progress-wrap">
+          <div class="progress-header"><span class="progress-label">Avance del caso</span><span class="progress-pct">${pct}%</span></div>
+          <div class="progress-bar-bg"><div class="progress-bar-fill ${claseBarra(c.estado)}" style="width:0%" data-target="${pct}"></div></div>
         </div>
-      </div>
-
-      <!-- GRID PRINCIPAL -->
-      <div class="perfil-grid">
-
-        <!-- COL IZQUIERDA -->
-        <div>
-          <!-- DATOS DEL AGENTE -->
-          <div class="panel-card" style="margin-bottom:.8rem;">
-            <div class="panel-head"><span class="panel-title"><i class="ti ti-id-badge" aria-hidden="true"></i> Datos del Agente</span></div>
-            <div class="panel-body">
-              <div class="perfil-info-row"><span class="perfil-info-lbl">Nombre completo</span><span class="perfil-info-val">${user.nombre}</span></div>
-              <div class="perfil-info-row"><span class="perfil-info-lbl">Usuario</span><span class="perfil-info-val" style="font-family:var(--mono);">@${user.username}</span></div>
-              <div class="perfil-info-row"><span class="perfil-info-lbl">Rango</span><span class="perfil-info-val">${user.rango}</span></div>
-              <div class="perfil-info-row"><span class="perfil-info-lbl">Rol en el sistema</span><span class="perfil-info-val">${user.rol}</span></div>
-              <div class="perfil-info-row"><span class="perfil-info-lbl">Departamento</span><span class="perfil-info-val">${user.dpto}</span></div>
-              <div class="perfil-info-row"><span class="perfil-info-lbl">Estación</span><span class="perfil-info-val">Central GDL</span></div>
-              <div class="perfil-info-row"><span class="perfil-info-lbl">División</span><span class="perfil-info-val">Metropolitana Jalisco</span></div>
-            </div>
-          </div>
-
-          <!-- CASOS A CARGO -->
-          <div class="panel-card">
-            <div class="panel-head"><span class="panel-title"><i class="ti ti-folder" aria-hidden="true"></i> Casos Asignados</span><span class="panel-count">${casosAgente.length}</span></div>
-            <div class="panel-body">
-              ${casosAgente.length
-                ? casosAgente.map(c=>`
-                  <div class="case-row" onclick="abrirCaso(${c.id})">
-                    <span class="case-num">C-${padId(c.id)}</span>
-                    <span class="case-name">${c.asunto}</span>
-                    ${badge(c.estado)}
-                  </div>`).join('')
-                : `<div style="font-size:.58rem;color:var(--text3);font-family:var(--mono);">// sin casos asignados a tu usuario</div>`}
-            </div>
-          </div>
-        </div>
-
-        <!-- COL DERECHA -->
-        <div>
-
-          <!-- NOTAS PERSONALES -->
-          <div class="panel-card" style="margin-bottom:.8rem;">
-            <div class="panel-head"><span class="panel-title"><i class="ti ti-notes" aria-hidden="true"></i> Notas Personales</span></div>
-            <div class="panel-body">
-              <textarea class="nota-input" id="nueva-nota" rows="3" placeholder="// escribe una nota de investigación..."></textarea>
-              <button class="add-btn" onclick="agregarNota()"><i class="ti ti-plus" aria-hidden="true"></i> Agregar nota</button>
-              <div style="margin-top:.8rem;" id="notas-lista"></div>
-            </div>
-          </div>
-
-          <!-- PISTAS ACTIVAS -->
-          <div class="panel-card">
-            <div class="panel-head"><span class="panel-title"><i class="ti ti-bulb" aria-hidden="true"></i> Pistas Activas</span></div>
-            <div class="panel-body">
-              <textarea class="nota-input" id="nueva-pista" rows="2" placeholder="// descripción de la pista..."></textarea>
-              <input class="nota-input" id="pista-caso" placeholder="// caso relacionado (ej: Callejón 45)" style="margin-bottom:.4rem;">
-              <button class="add-btn" onclick="agregarPista()"><i class="ti ti-plus" aria-hidden="true"></i> Agregar pista</button>
-              <div style="margin-top:.8rem;" id="pistas-lista"></div>
-            </div>
-          </div>
-
+        <div class="caso-card-meta">
+          <div class="caso-card-meta-item"><i class="ti ti-calendar"></i>${c.fecha_apertura?.split('T')[0] || '—'}</div>
+          <div class="caso-card-meta-item"><i class="ti ti-clock"></i>${dias} días activo</div>
+          <div class="caso-card-meta-item"><i class="ti ti-users"></i>${c.involucrados?.length ?? '—'} involucrados</div>
+          <div class="caso-card-meta-item"><i class="ti ti-archive"></i>${c.evidencias?.length ?? '—'} evidencias</div>
         </div>
       </div>`;
+    }
 
-    // Renderizar listas después de insertar el HTML
-    renderNots();
-    renderPistas();
+    /* ── Cargar todo ── */
+    async function cargarPerfil() {
+      try {
+        const lista = await apiGetDetectives({ username: user.username });
+        const detS = lista.find(d => d.username === user.username);
+        if (!detS) {
+          document.getElementById('perfil-content').innerHTML = `
+            <div style="text-align:center;padding:3rem;color:var(--text3);font-family:var(--mono);font-size:.72rem;">
+              // este usuario no tiene detective asignado en la base de datos
+            </div>`;
+          return;
+        }
+
+        const det = await apiGetDetective(detS.id_detective);
+        const casos = await Promise.all((det.casos || []).map(c => apiGetCaso(c.id_caso).catch(() => c)));
+
+        const total = casos.length;
+        const cerrados = casos.filter(c => c.estado === 'Cerrado').length;
+        const enInv = casos.filter(c => c.estado === 'En investigación').length;
+        const abiertos = casos.filter(c => c.estado === 'Abierto').length;
+        const totalEv = (det.evidencias || []).length;
+        const notasN = getNots().length;
+        const pctGlobal = total > 0 ? Math.round((cerrados / total) * 100) : 0;
+
+        document.getElementById('perfil-content').innerHTML = `
+          <!-- HERO -->
+          <div class="perfil-hero-card">
+            <div class="perfil-big-avatar">${ini(user.nombre)}</div>
+            <div class="perfil-info-main" style="flex:1;">
+              <div class="perfil-nombre">${user.nombre}</div>
+              <div class="perfil-cargo">${user.rango} · ${user.rol}</div>
+              <div class="perfil-dpto">${user.dpto} · @${user.username}</div>
+              <div class="perfil-stats">
+                <div class="pstat"><div class="pstat-num">${total}</div><div class="pstat-lbl">Casos a cargo</div></div>
+                <div class="pstat"><div class="pstat-num">${cerrados}</div><div class="pstat-lbl">Cerrados</div></div>
+                <div class="pstat"><div class="pstat-num">${totalEv}</div><div class="pstat-lbl">Evidencias reg.</div></div>
+              </div>
+            </div>
+            <div style="flex-shrink:0;opacity:.15;pointer-events:none;">
+              <img src="src/imagenes/logo.jpeg" style="width:100px;height:100px;object-fit:contain;" alt="">
+            </div>
+          </div>
+
+          <div class="perfil-grid">
+
+            <!-- COL IZQUIERDA -->
+            <div>
+              <div class="panel-card" style="margin-bottom:.8rem;">
+                <div class="panel-head"><span class="panel-title"><i class="ti ti-id-badge"></i> Datos del Agente</span></div>
+                <div class="panel-body">
+                  <div class="perfil-info-row"><span class="perfil-info-lbl">Nombre</span><span class="perfil-info-val">${user.nombre}</span></div>
+                  <div class="perfil-info-row"><span class="perfil-info-lbl">Usuario</span><span class="perfil-info-val" style="font-family:var(--mono);">@${user.username}</span></div>
+                  <div class="perfil-info-row"><span class="perfil-info-lbl">Rango</span><span class="perfil-info-val">${user.rango}</span></div>
+                  <div class="perfil-info-row"><span class="perfil-info-lbl">Rol</span><span class="perfil-info-val">${user.rol}</span></div>
+                  <div class="perfil-info-row"><span class="perfil-info-lbl">Departamento</span><span class="perfil-info-val">${user.dpto}</span></div>
+                  <div class="perfil-info-row"><span class="perfil-info-lbl">Estación</span><span class="perfil-info-val">Central GDL</span></div>
+                  <div class="perfil-info-row"><span class="perfil-info-lbl">División</span><span class="perfil-info-val">Metropolitana Jalisco</span></div>
+                </div>
+              </div>
+
+              <div class="panel-card" style="margin-bottom:.8rem;">
+                <div class="panel-head"><span class="panel-title"><i class="ti ti-chart-bar"></i> Resumen de Avance</span></div>
+                <div class="panel-body">
+                  <div class="avance-resumen">
+                    <div class="avance-mini"><div class="avance-mini-num" style="color:#22c55e;">${cerrados}</div><div class="avance-mini-lbl">Cerrados</div></div>
+                    <div class="avance-mini"><div class="avance-mini-num" style="color:#fbbf24;">${enInv}</div><div class="avance-mini-lbl">Investigando</div></div>
+                    <div class="avance-mini"><div class="avance-mini-num" style="color:#f87171;">${abiertos}</div><div class="avance-mini-lbl">Abiertos</div></div>
+                  </div>
+                  ${total > 0 ? `<div class="progress-wrap">
+                    <div class="progress-header"><span class="progress-label">Efectividad general</span><span class="progress-pct">${pctGlobal}% cerrados</span></div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill cerrado" style="width:0%" data-target="${pctGlobal}"></div></div>
+                  </div>`: ''}
+                </div>
+              </div>
+
+              <div class="panel-card" style="margin-bottom:.8rem;">
+                <div class="panel-head"><span class="panel-title"><i class="ti ti-notes"></i> Notas Personales</span><span class="panel-count" id="stat-notas">${notasN}</span></div>
+                <div class="panel-body">
+                  <textarea class="nota-input" id="nueva-nota" rows="3" placeholder="// escribe una nota de investigación..."></textarea>
+                  <button class="add-btn" onclick="agregarNota()"><i class="ti ti-plus"></i> Agregar nota</button>
+                  <div style="margin-top:.8rem;" id="notas-lista"></div>
+                </div>
+              </div>
+
+              <div class="panel-card">
+                <div class="panel-head"><span class="panel-title"><i class="ti ti-bulb"></i> Pistas Activas</span></div>
+                <div class="panel-body">
+                  <textarea class="nota-input" id="nueva-pista" rows="2" placeholder="// descripción de la pista..."></textarea>
+                  <input class="nota-input" id="pista-caso" placeholder="// caso relacionado" style="margin-bottom:.4rem;">
+                  <button class="add-btn" onclick="agregarPista()"><i class="ti ti-plus"></i> Agregar pista</button>
+                  <div style="margin-top:.8rem;" id="pistas-lista"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- COL DERECHA -->
+            <div>
+              <div class="panel-card">
+                <div class="panel-head">
+                  <span class="panel-title"><i class="ti ti-folder-open"></i> Casos Asignados &amp; Avance</span>
+                  <span class="panel-count">${total} caso${total !== 1 ? 's' : ''}</span>
+                </div>
+                <div class="panel-body" id="casos-progreso">
+                  ${total > 0
+            ? casos.map(renderCasoCard).join('')
+            : `<div style="font-size:.58rem;color:var(--text3);font-family:var(--mono);padding:.5rem 0;">// no tienes casos asignados actualmente</div>`
+          }
+                </div>
+              </div>
+            </div>
+
+          </div>`;
+
+        renderNots();
+        renderPistas();
+        animarBarras();
+
+      } catch (err) {
+        console.error(err);
+        document.getElementById('perfil-content').innerHTML = `<div style="text-align:center;padding:3rem;color:#f87171;font-family:var(--mono);font-size:.72rem;"><i class="ti ti-alert-circle" style="font-size:1.5rem;display:block;margin-bottom:.5rem;"></i>// error cargando el perfil<br><span style="font-size:.6rem;color:var(--text3);margin-top:.4rem;display:block;">Verifica que el servidor esté corriendo en localhost:3001</span></div>`;
+      }
+    }
+
+    /* Abrir modal de caso desde perfil */
+    async function abrirCasoPerfilAPI(id) {
+      try {
+        const c = await apiGetCaso(id);
+        const pct = calcularProgreso(c.estado);
+        const inv = c.involucrados?.length ? c.involucrados.map(p => `<div class="involucrado-row"><div class="det-av">${ini(p.nombre)}</div><div style="flex:1"><div style="font-family:var(--title);font-size:.72rem;font-weight:600;color:var(--white);">${p.nombre}</div><div style="font-size:.54rem;color:var(--text2);margin-top:.1rem;font-style:italic;">${p.declaracion || ''}</div></div><span class="rol-badge rol-${p.rol}">${p.rol}</span></div>`).join('') : `<div style="font-size:.56rem;color:var(--text3);font-family:var(--mono);">// sin involucrados</div>`;
+        const ev = c.evidencias?.length ? c.evidencias.map(e => `<div class="evid-mini"><div class="evid-icon" style="width:28px;height:28px;font-size:.85rem;"><i class="ti ${evIconClass(e.tipo)}"></i></div><div style="flex:1"><div class="evid-type" style="font-size:.44rem;">${e.tipo}</div><div style="font-size:.6rem;color:var(--white);">${e.descripcion}</div>${e.ruta_archivo ? `<div class="evid-path">${e.ruta_archivo}</div>` : `<div class="evid-nofile">// física</div>`}</div><div style="font-size:.42rem;color:var(--text3);font-family:var(--mono);">EV-${padId(e.id_evidencia, 4)}</div></div>`).join('') : `<div style="font-size:.56rem;color:var(--text3);font-family:var(--mono);">// sin evidencias</div>`;
+
+        document.body.insertAdjacentHTML('beforeend', `
+          <div class="overlay open" id="caso-overlay" onclick="cerrarModal('caso-overlay','caso-modal')">
+            <div class="modal" id="caso-modal" onclick="event.stopPropagation()">
+              <div class="modal-head">
+                <div><div class="modal-title">${c.asunto}</div><div class="modal-sub">C-${padId(c.id_caso)} · ${c.fecha_apertura?.split('T')[0] || ''}</div></div>
+                <button class="modal-close" onclick="cerrarModal('caso-overlay','caso-modal')"><i class="ti ti-x"></i></button>
+              </div>
+              <div class="modal-body">
+                <div><div class="modal-section-title">Información General</div>
+                <div class="info-grid">
+                  <div class="info-cell"><div class="info-label">Estado</div><div class="info-value">${badge(c.estado)}</div></div>
+                  <div class="info-cell"><div class="info-label">Detective</div><div class="info-value cyan">${c.detective || '—'}</div></div>
+                  <div class="info-cell"><div class="info-label">Presupuesto</div><div class="info-value cyan">$${fmt(Number(c.presupuesto) || 0)}</div></div>
+                  <div class="info-cell"><div class="info-label">Departamento</div><div class="info-value">${c.dpto || '—'}</div></div>
+                  <div class="info-cell"><div class="info-label">Fecha apertura</div><div class="info-value">${c.fecha_apertura?.split('T')[0] || '—'}</div></div>
+                  <div class="info-cell"><div class="info-label">Etiquetas</div><div class="info-value">${(c.etiquetas || []).map(t => `<span class="tag">${t}</span>`).join('') || '—'}</div></div>
+                </div></div>
+                <div><div class="modal-section-title">Avance del Caso</div>
+                <div style="background:var(--panel);border:1px solid var(--border);padding:.8rem 1rem;">
+                  <div class="progress-header"><span class="progress-label">${c.estado}</span><span class="progress-pct">${pct}%</span></div>
+                  <div class="progress-bar-bg" style="height:8px;"><div class="progress-bar-fill ${claseBarra(c.estado)}" style="width:0%;height:8px;" data-target="${pct}"></div></div>
+                  <div style="font-size:.52rem;color:var(--text3);font-family:var(--mono);margin-top:.5rem;">${c.estado === 'Cerrado' ? '✓ Caso cerrado exitosamente' : c.estado === 'En investigación' ? '◈ Investigación activa — recopilando evidencias' : '● Caso abierto — pendiente de avance'}</div>
+                </div></div>
+                <div><div class="modal-section-title">Descripción</div>
+                <div style="background:var(--panel);border:1px solid var(--border);border-left:2px solid var(--cyan3);padding:.75rem .9rem;font-size:.65rem;color:var(--text);line-height:1.7;">${c.descripcion || '—'}</div></div>
+                <div><div class="modal-section-title">Involucrados (${c.involucrados?.length || 0})</div>${inv}</div>
+                <div><div class="modal-section-title">Evidencias (${c.evidencias?.length || 0})</div>${ev}</div>
+              </div>
+            </div>
+          </div>`);
+
+        setTimeout(() => {
+          document.querySelectorAll('#caso-modal .progress-bar-fill[data-target]').forEach(b => { b.style.width = b.getAttribute('data-target') + '%'; });
+        }, 150);
+      } catch (e) { console.error(e); }
+    }
+
+    cargarPerfil();
   </script>
 </body>
+
 </html>

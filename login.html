@@ -1,165 +1,189 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NEXUS — Sistema Integral de Control Criminal</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Barlow+Condensed:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Barlow+Condensed:wght@300;400;600;700&family=Share+Tech+Mono&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
   <link rel="stylesheet" href="src/css/styles.css">
   <script>
     // Aplica tema antes del render para evitar flash
-    (function(){
-      const t=sessionStorage.getItem('nexus_theme')||'dark';
-      document.documentElement.setAttribute('data-theme',t);
+    (function () {
+      const t = sessionStorage.getItem('nexus_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', t);
     })();
   </script>
 </head>
+
 <body>
-<div class="login-page">
+  <div class="login-page">
 
-  <!-- TOPBAR -->
-  <div class="login-topbar">
-    <span class="login-topbar-left">NEXUS · SISTEMA INTEGRAL DE CONTROL CRIMINAL &nbsp;·&nbsp; ACCESO RESTRINGIDO</span>
-    <div style="display:flex;align-items:center;gap:.6rem;">
-      <span style="font-size:.52rem;color:var(--text3);">v4.0 · GDL</span>
-      <button class="theme-toggle" id="login-theme-btn" onclick="toggleLoginTheme()" aria-label="Cambiar tema">
-        <i class="ti ti-sun icon-sun" aria-hidden="true"></i>
-        <i class="ti ti-moon icon-moon" aria-hidden="true"></i>
-      </button>
+    <!-- TOPBAR -->
+    <div class="login-topbar">
+      <span class="login-topbar-left">NEXUS · SISTEMA INTEGRAL DE CONTROL CRIMINAL &nbsp;·&nbsp; ACCESO
+        RESTRINGIDO</span>
+      <div style="display:flex;align-items:center;gap:.6rem;">
+        <span style="font-size:.52rem;color:var(--text3);">v4.0 · GDL</span>
+        <button class="theme-toggle" id="login-theme-btn" onclick="toggleLoginTheme()" aria-label="Cambiar tema">
+          <i class="ti ti-sun icon-sun" aria-hidden="true"></i>
+          <i class="ti ti-moon icon-moon" aria-hidden="true"></i>
+        </button>
+      </div>
     </div>
-  </div>
 
-  <!-- HEADER -->
-  <div class="login-header">
-    <div class="logo-img-wrap" style="width:48px;height:48px;">
-      <img src="src/imagenes/logo.jpeg" alt="NEXUS Logo" style="width:48px;height:48px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(0,200,224,.3));">
+    <!-- HEADER -->
+    <div class="login-header">
+      <div class="logo-img-wrap" style="width:48px;height:48px;">
+        <img src="src/imagenes/logo.jpeg" alt="NEXUS Logo"
+          style="width:48px;height:48px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(0,200,224,.3));">
+      </div>
+      <div>
+        <div class="logo-text-main"
+          style="font-family:'Rajdhani',sans-serif;font-size:1.15rem;font-weight:700;letter-spacing:.16em;background:linear-gradient(90deg,#fff 60%,#00c8e0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+          NEXUS</div>
+        <div class="logo-text-sub">SISTEMA INTEGRAL DE CONTROL CRIMINAL · JALISCO</div>
+      </div>
     </div>
-    <div>
-      <div class="logo-text-main" style="font-family:'Rajdhani',sans-serif;font-size:1.15rem;font-weight:700;letter-spacing:.16em;background:linear-gradient(90deg,#fff 60%,#00c8e0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">NEXUS</div>
-      <div class="logo-text-sub">SISTEMA INTEGRAL DE CONTROL CRIMINAL · JALISCO</div>
-    </div>
-  </div>
 
-  <!-- HERO -->
-  <div class="login-hero">
-    <!--
+    <!-- HERO -->
+    <div class="login-hero">
+      <!--
       ══════════════════════════════════════════════════
       IMAGEN DE FONDO HERO LOGIN:
       Descomenta y ajusta la ruta:
       <img src="src/imagenes/hero-login.jpg" class="login-hero-img" alt="">
       ══════════════════════════════════════════════════
     -->
-    <div class="login-hero-grid"></div>
-    <div class="login-hero-glow"></div>
-    <div class="scan-line"></div>
+      <div class="login-hero-grid"></div>
+      <div class="login-hero-glow"></div>
+      <div class="scan-line"></div>
 
-    <!-- Partículas flotantes -->
-    <div class="particles">
-      <div class="particle"></div>
-      <div class="particle"></div>
-      <div class="particle"></div>
-      <div class="particle"></div>
-      <div class="particle"></div>
-      <div class="particle"></div>
-    </div>
-
-    <!-- Texto izquierdo -->
-    <div class="hero-text">
-      <div class="hero-text-tag">BIENVENIDO AL SISTEMA OPERATIVO</div>
-      <div class="hero-text-title">CRIME<br>RECORD<br><span>SYSTEM</span></div>
-      <div class="hero-text-sub">
-        PLATAFORMA INSTITUCIONAL<br>
-        GESTIÓN DE CASOS CRIMINALES<br>
-        GUADALAJARA · JALISCO
+      <!-- Partículas flotantes -->
+      <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
       </div>
-    </div>
 
-    <!-- LOGO GRANDE + CARD agrupados -->
-    <div style="display:flex;flex-direction:column;align-items:center;gap:0;z-index:3;animation:fadeInUp .5s .4s both;">
+      <!-- Texto izquierdo -->
+      <div class="hero-text">
+        <div class="hero-text-tag">BIENVENIDO AL SISTEMA OPERATIVO</div>
+        <div class="hero-text-title">CRIME<br>RECORD<br><span>SYSTEM</span></div>
+        <div class="hero-text-sub">
+          PLATAFORMA INSTITUCIONAL<br>
+          GESTIÓN DE CASOS CRIMINALES<br>
+          GUADALAJARA · JALISCO
+        </div>
+      </div>
 
-      <!-- LOGO — estático, sin animación, encima del formulario -->
-      <img src="src/imagenes/logo.jpeg" alt="NEXUS"
-           style="width:190px;height:190px;object-fit:contain;
+      <!-- LOGO GRANDE + CARD agrupados -->
+      <div
+        style="display:flex;flex-direction:column;align-items:center;gap:0;z-index:3;animation:fadeInUp .5s .4s both;">
+
+        <!-- LOGO — estático, sin animación, encima del formulario -->
+        <img src="src/imagenes/logo.jpeg" alt="NEXUS" style="width:190px;height:190px;object-fit:contain;
                   filter:drop-shadow(0 0 20px rgba(0,200,224,.3)) drop-shadow(0 0 8px rgba(245,158,11,.12));
                   display:block;flex-shrink:0;">
 
-      <!-- Card login -->
-      <div class="login-card" style="animation:none;width:320px;">
-        <div class="lc-title">Acceso al Sistema</div>
-        <div class="lc-sub">// NEXUS · AUTENTICACIÓN REQUERIDA</div>
+        <!-- Card login -->
+        <div class="login-card" style="animation:none;width:320px;">
+          <div class="lc-title">Acceso al Sistema</div>
+          <div class="lc-sub">// NEXUS · AUTENTICACIÓN REQUERIDA</div>
 
-      <label class="lbl" for="uname">Usuario</label>
-      <input class="linput" id="uname" type="text" placeholder="nombre.apellido" autocomplete="off">
+          <label class="lbl" for="uname">Usuario</label>
+          <input class="linput" id="uname" type="text" placeholder="nombre.apellido" autocomplete="off">
 
-      <label class="lbl" for="upass">Contraseña</label>
-      <input class="linput" id="upass" type="password" placeholder="••••••••" autocomplete="off">
+          <label class="lbl" for="upass">Contraseña</label>
+          <input class="linput" id="upass" type="password" placeholder="••••••••" autocomplete="off">
 
-      <button class="login-btn" onclick="doLogin()">
-        <i class="ti ti-login" aria-hidden="true"></i>
-        <span>INICIAR SESIÓN</span>
-      </button>
+          <button class="login-btn" onclick="doLogin()">
+            <i class="ti ti-login" aria-hidden="true"></i>
+            <span>INICIAR SESIÓN</span>
+          </button>
 
-      <div class="login-err" id="login-err"></div>
-      <div class="login-hint">
-        // usuarios de prueba<br>
-        tstark · mmontes · rpadilla · kperez · lmorningstar<br>
-        // contraseña: 1234
+          <div class="login-err" id="login-err"></div>
+          <div class="login-hint">
+            // usuarios de prueba<br>
+            tstark · mmontes · rpadilla · kperez · lmorningstar<br>
+            // contraseña: 1234
+          </div>
+        </div><!-- /login-card -->
+      </div><!-- /logo+card wrapper -->
+    </div>
+
+    <!-- ACCESOS RÁPIDOS -->
+    <div class="quicklinks">
+      <div class="ql"><i class="ti ti-folder-open" aria-hidden="true"></i>
+        <div class="ql-label">Casos Activos</div>
       </div>
-    </div><!-- /login-card -->
-    </div><!-- /logo+card wrapper -->
+      <div class="ql"><i class="ti ti-search" aria-hidden="true"></i>
+        <div class="ql-label">Buscar Expediente</div>
+      </div>
+      <div class="ql"><i class="ti ti-users" aria-hidden="true"></i>
+        <div class="ql-label">Directorio</div>
+      </div>
+      <div class="ql"><i class="ti ti-database-lock" aria-hidden="true"></i>
+        <div class="ql-label">Acceso Restringido</div>
+      </div>
+    </div>
+
   </div>
 
-  <!-- ACCESOS RÁPIDOS -->
-  <div class="quicklinks">
-    <div class="ql"><i class="ti ti-folder-open" aria-hidden="true"></i><div class="ql-label">Casos Activos</div></div>
-    <div class="ql"><i class="ti ti-search" aria-hidden="true"></i><div class="ql-label">Buscar Expediente</div></div>
-    <div class="ql"><i class="ti ti-users" aria-hidden="true"></i><div class="ql-label">Directorio</div></div>
-    <div class="ql"><i class="ti ti-database-lock" aria-hidden="true"></i><div class="ql-label">Acceso Restringido</div></div>
-  </div>
+  <script src="src/js/api.js"></script>
+  <script src="src/js/app.js"></script>
+  <script>
+    // Redirige si ya hay sesión activa
+    if (sessionStorage.getItem('nexus_token')) window.location.href = 'dashboard.html';
 
-</div>
-
-<script src="src/js/app.js"></script>
-<script>
-  // Redirige si ya hay sesión
-  if(sessionStorage.getItem('nexus_user'))window.location.href='dashboard.html';
-
-  // Sincronizar icones del toggle
-  function syncThemeIcons(){
-    const isDark=(document.documentElement.getAttribute('data-theme')||'dark')==='dark';
-    document.querySelectorAll('.icon-sun').forEach(el=>el.style.display=isDark?'none':'block');
-    document.querySelectorAll('.icon-moon').forEach(el=>el.style.display=isDark?'block':'none');
-  }
-  syncThemeIcons();
-
-  function toggleLoginTheme(){
-    toggleTheme();
-    syncThemeIcons();
-  }
-
-  function doLogin(){
-    const u=document.getElementById('uname').value.trim().toLowerCase();
-    const p=document.getElementById('upass').value;
-    const err=document.getElementById('login-err');
-    const btn=document.querySelector('.login-btn');
-    if(USERS[u]&&USERS[u].pass===p){
-      btn.innerHTML='<i class="ti ti-check" aria-hidden="true"></i><span>ACCESO CONCEDIDO</span>';
-      btn.style.borderColor='var(--green)';
-      btn.querySelector('i').style.color='var(--green)';
-      btn.querySelector('span').style.color='var(--green)';
-      setTimeout(()=>loginAndRedirect(u),600);
-    }else{
-      err.textContent='// CREDENCIALES INVÁLIDAS — ACCESO DENEGADO';
-      document.getElementById('upass').value='';
-      btn.style.borderColor='var(--red)';
-      btn.querySelector('span').style.color='var(--red)';
-      setTimeout(()=>{btn.style.borderColor='';btn.querySelector('span').style.color='';},1500);
+    function syncThemeIcons() {
+      const isDark = (document.documentElement.getAttribute('data-theme') || 'dark') === 'dark';
+      document.querySelectorAll('.icon-sun').forEach(el => el.style.display = isDark ? 'none' : 'block');
+      document.querySelectorAll('.icon-moon').forEach(el => el.style.display = isDark ? 'block' : 'none');
     }
-  }
+    syncThemeIcons();
 
-  document.getElementById('upass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
-  document.getElementById('uname').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('upass').focus();});
-</script>
+    function toggleLoginTheme() { toggleTheme(); syncThemeIcons(); }
+
+    async function doLogin() {
+      const u = document.getElementById('uname').value.trim().toLowerCase();
+      const p = document.getElementById('upass').value;
+      const err = document.getElementById('login-err');
+      const btn = document.querySelector('.login-btn');
+      const sp = btn.querySelector('span');
+
+      if (!u || !p) { err.textContent = '// Usuario y contraseña requeridos'; return; }
+
+      sp.textContent = 'VERIFICANDO...';
+      err.textContent = '';
+
+      try {
+        await apiLogin(u, p);
+        sp.textContent = 'ACCESO CONCEDIDO';
+        btn.style.borderColor = 'var(--green)';
+        btn.querySelector('i').style.color = 'var(--green)';
+        sp.style.color = 'var(--green)';
+        setTimeout(() => window.location.href = 'dashboard.html', 700);
+      } catch (e) {
+        err.textContent = '// CREDENCIALES INVÁLIDAS — ACCESO DENEGADO';
+        sp.textContent = 'INICIAR SESIÓN';
+        btn.style.borderColor = 'var(--red)';
+        sp.style.color = 'var(--red)';
+        document.getElementById('upass').value = '';
+        setTimeout(() => { btn.style.borderColor = ''; sp.style.color = ''; }, 1500);
+      }
+    }
+
+    document.getElementById('upass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+    document.getElementById('uname').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('upass').focus(); });
+  </script>
 </body>
+
 </html>

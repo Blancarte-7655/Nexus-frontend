@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NEXUS — Directorio de Detectives</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Barlow+Condensed:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Barlow+Condensed:wght@300;400;600;700&family=Share+Tech+Mono&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
   <link rel="stylesheet" href="src/css/styles.css">
-  <script>(function(){const t=sessionStorage.getItem('nexus_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
+  <script>(function () { const t = sessionStorage.getItem('nexus_theme') || 'dark'; document.documentElement.setAttribute('data-theme', t); })();</script>
 </head>
+
 <body>
   <div id="nav-container"></div>
   <div class="page-hero">
@@ -18,32 +23,55 @@
   </div>
   <div class="content-area">
     <div class="toolbar">
-      <div class="search-wrap"><i class="ti ti-search search-icon" aria-hidden="true"></i><input class="search-box" id="det-search" placeholder="// buscar nombre, rango o departamento..." oninput="renderGrid()"></div>
+      <div class="search-wrap"><i class="ti ti-search search-icon" aria-hidden="true"></i><input class="search-box"
+          id="det-search" placeholder="// buscar nombre, rango o departamento..." oninput="renderGrid()"></div>
       <button class="flt-btn act" onclick="setFiltro('todos',this)">Todos</button>
       <button class="flt-btn" onclick="setFiltro('Investigador',this)">Investigadores</button>
       <button class="flt-btn" onclick="setFiltro('Analista',this)">Analistas</button>
       <button class="flt-btn" onclick="setFiltro('Capturista',this)">Capturistas</button>
       <button class="flt-btn" onclick="setFiltro('Administrativo',this)">Administrativos</button>
     </div>
-    <div style="font-size:.52rem;color:var(--text3);font-family:var(--mono);margin-bottom:.5rem;">// click en una tarjeta para ver casos y próximos movimientos</div>
+    <div style="font-size:.52rem;color:var(--text3);font-family:var(--mono);margin-bottom:.5rem;">// click en una
+      tarjeta para ver casos y próximos movimientos</div>
     <div class="det-grid" id="det-grid"></div>
   </div>
+  <script src="src/js/api.js"></script>
   <script src="src/js/app.js"></script>
   <script>
     initNav('detectives');
-    document.getElementById('ph-sub').textContent=`${DETECTIVES.length} agentes en activo · División Metropolitana GDL`;
-    let filtroRol='todos';
-    function setFiltro(f,btn){filtroRol=f;document.querySelectorAll('.flt-btn').forEach(b=>b.classList.remove('act'));btn.classList.add('act');renderGrid();}
-    function renderGrid(){
-      const q=document.getElementById('det-search').value.toLowerCase();
-      let lista=DETECTIVES;
-      if(filtroRol!=='todos')lista=lista.filter(d=>d.rol===filtroRol);
-      if(q)lista=lista.filter(d=>d.nombre.toLowerCase().includes(q)||d.rango.toLowerCase().includes(q)||d.dpto.toLowerCase().includes(q));
-      const grid=document.getElementById('det-grid');
-      if(!lista.length){grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text3);font-family:var(--mono);">// sin resultados</div>`;return;}
-      grid.innerHTML=lista.map(d=>`<div class="det-card" onclick="abrirDetective(${d.id})"><div class="det-card-top"><div class="det-card-av">${ini(d.nombre)}</div><div><div class="det-card-nm">${d.nombre}</div><div class="det-card-user">@${d.user}</div></div></div><div class="det-info-row"><span class="di-lbl">Rango</span><span class="di-val">${d.rango}</span></div><div class="det-info-row"><span class="di-lbl">Departamento</span><span class="di-val">${d.dpto}</span></div><div class="det-info-row"><span class="di-lbl">Rol</span><span class="di-val">${d.rol}</span></div><div class="det-info-row"><span class="di-lbl">Casos activos</span><span class="di-val" style="color:var(--cyan);">${d.casos_ids.length}</span></div></div>`).join('');
+    mostrarLoader('det-grid');
+    let filtroRol = 'todos', todosLosDetectives = [];
+
+    async function init() {
+      try {
+        todosLosDetectives = await apiGetDetectives();
+        document.getElementById('ph-sub').textContent = `${todosLosDetectives.length} agentes en activo · División Metropolitana GDL`;
+        renderGrid();
+      } catch (e) { mostrarError('det-grid'); }
     }
-    renderGrid();
+
+    function setFiltro(f, btn) { filtroRol = f; document.querySelectorAll('.flt-btn').forEach(b => b.classList.remove('act')); btn.classList.add('act'); renderGrid(); }
+
+    function renderGrid() {
+      const q = document.getElementById('det-search').value.toLowerCase();
+      let lista = todosLosDetectives;
+      if (filtroRol !== 'todos') lista = lista.filter(d => d.rol === filtroRol);
+      if (q) lista = lista.filter(d => d.nombre.toLowerCase().includes(q) || d.rango.toLowerCase().includes(q) || d.dpto.toLowerCase().includes(q));
+      const grid = document.getElementById('det-grid');
+      if (!lista.length) { grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text3);font-family:var(--mono);">// sin resultados</div>`; return; }
+      grid.innerHTML = lista.map(d => `<div class="det-card" onclick="abrirDetectiveAPI(${d.id_detective})"><div class="det-card-top"><div class="det-card-av">${ini(d.nombre)}</div><div><div class="det-card-nm">${d.nombre}</div><div class="det-card-user">@${d.username}</div></div></div><div class="det-info-row"><span class="di-lbl">Rango</span><span class="di-val">${d.rango}</span></div><div class="det-info-row"><span class="di-lbl">Departamento</span><span class="di-val">${d.dpto}</span></div><div class="det-info-row"><span class="di-lbl">Rol</span><span class="di-val">${d.rol}</span></div><div class="det-info-row"><span class="di-lbl">Casos activos</span><span class="di-val" style="color:var(--cyan);">${d.casos_activos || 0}</span></div></div>`).join('');
+    }
+
+    async function abrirDetectiveAPI(id) {
+      try {
+        const d = await apiGetDetective(id);
+        const casosHTML = d.casos?.length ? d.casos.map(c => `<div class="caso-mini"><span class="case-num">C-${padId(c.id_caso)}</span><span style="font-family:var(--title);font-size:.72rem;font-weight:600;color:var(--white);flex:1;">${c.asunto}</span>${badge(c.estado)}</div>`).join('') : `<div style="font-size:.56rem;color:var(--text3);font-family:var(--mono);">// sin casos asignados</div>`;
+        document.body.insertAdjacentHTML('beforeend', `<div class="side-overlay open" id="side-overlay" onclick="cerrarSidePanel()"></div><div class="side-panel open" id="side-panel"><div class="side-head"><div><div class="side-title">${d.nombre}</div><div style="font-size:.5rem;color:var(--text3);font-family:var(--mono);">@${d.username} · ${d.dpto}</div></div><button class="side-close" onclick="cerrarSidePanel()"><i class="ti ti-x"></i></button></div><div class="side-body"><div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-bottom:1rem;"><div class="info-cell"><div class="info-label">Rango</div><div class="info-value" style="font-size:.62rem;">${d.rango}</div></div><div class="info-cell"><div class="info-label">Rol</div><div class="info-value" style="font-size:.62rem;">${d.rol}</div></div><div class="info-cell"><div class="info-label">Departamento</div><div class="info-value" style="font-size:.62rem;">${d.dpto}</div></div><div class="info-cell"><div class="info-label">Fecha alta</div><div class="info-value" style="font-size:.62rem;">${d.fecha_alta?.split('T')[0] || '—'}</div></div></div><div><div class="modal-section-title">Casos Asignados (${d.casos?.length || 0})</div>${casosHTML}</div></div></div>`);
+      } catch (e) { console.error(e); }
+    }
+
+    init();
   </script>
 </body>
+
 </html>

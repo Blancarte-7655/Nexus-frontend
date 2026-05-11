@@ -116,5 +116,5 @@ Presiona **ESC** para cerrar cualquier modal o panel.
 1. Extrae el ZIP → abre la carpeta `nexus` en VS Code
 2. Instala la extensión **Live Server**
 3. Click derecho en `login.html` → "Open with Live Server"
-4. Usuarios de prueba: tstark / mmontes / rpadilla / kperez / lmorningstar
+4. Usuarios de prueba: loing de mysql
 5. Contraseña: **1234**
