@@ -1,7 +1,6 @@
 /* =====================================================
    NEXUS Frontend — src/js/api.js
-   Reemplaza los datos estáticos de app.js con
-   llamadas reales a la API de Node.js
+   Versión con CRUD completo
    ===================================================== */
 
 const API_URL = 'http://localhost:3001/api';
@@ -15,7 +14,6 @@ function getToken() {
 
 async function apiFetch(endpoint, options = {}) {
   const token = getToken();
-
   const config = {
     headers: {
       'Content-Type': 'application/json',
@@ -23,20 +21,29 @@ async function apiFetch(endpoint, options = {}) {
     },
     ...options,
   };
-
   const res = await fetch(`${API_URL}${endpoint}`, config);
   const data = await res.json();
-
   if (!res.ok) {
-    // Token expirado → redirigir al login
     if (res.status === 401 || res.status === 403) {
+      localStorage.removeItem('nexus_token');
       sessionStorage.removeItem('nexus_token');
-      sessionStorage.removeItem('nexus_user');
       window.location.href = 'login.html';
     }
     throw new Error(data.error || `Error ${res.status}`);
   }
+  return data;
+}
 
+/* Fetch para subida de archivos (sin Content-Type para que el browser ponga multipart) */
+async function apiFetchForm(endpoint, formData) {
+  const token = getToken();
+  const res = await fetch(`${API_URL}${endpoint}`, {
+    method: 'POST',
+    headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+    body: formData,
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || `Error ${res.status}`);
   return data;
 }
 
@@ -44,21 +51,20 @@ async function apiFetch(endpoint, options = {}) {
    AUTH
    -------------------------------------------------- */
 async function apiLogin(username, password) {
-  const data = await apiFetch('/auth/login', {
-    method: 'POST',
-    body: JSON.stringify({ username, password }),
-  });
-  // Guardar token y usuario en sesión
-  sessionStorage.setItem('nexus_token', data.token);
-  sessionStorage.setItem('nexus_user', JSON.stringify(data.usuario));
+  const data = await apiFetch('/auth/login', { method: 'POST', body: JSON.stringify({ username, password }) });
   localStorage.setItem('nexus_token', data.token);
   localStorage.setItem('nexus_user', JSON.stringify(data.usuario));
+  sessionStorage.setItem('nexus_token', data.token);
+  sessionStorage.setItem('nexus_user', JSON.stringify(data.usuario));
   return data.usuario;
 }
 
-function apiGetCurrentUser() {
-  const raw = sessionStorage.getItem('nexus_user');
-  return raw ? JSON.parse(raw) : null;
+/* --------------------------------------------------
+   CATÁLOGOS (para formularios)
+   -------------------------------------------------- */
+async function apiGetCatalogos() {
+  const data = await apiFetch('/catalogos');
+  return data.data;
 }
 
 /* --------------------------------------------------
@@ -70,7 +76,7 @@ async function apiGetDashboard() {
 }
 
 /* --------------------------------------------------
-   CASOS
+   CASOS — CRUD
    -------------------------------------------------- */
 async function apiGetCasos(params = {}) {
   const qs = new URLSearchParams(params).toString();
@@ -81,6 +87,26 @@ async function apiGetCasos(params = {}) {
 async function apiGetCaso(id) {
   const data = await apiFetch(`/casos/${id}`);
   return data.data;
+}
+
+async function apiCrearCaso(payload) {
+  const data = await apiFetch('/casos', { method: 'POST', body: JSON.stringify(payload) });
+  return data;
+}
+
+async function apiEditarCaso(id, payload) {
+  const data = await apiFetch(`/casos/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
+  return data;
+}
+
+async function apiCambiarEstadoCaso(id, id_estado) {
+  const data = await apiFetch(`/casos/${id}/estado`, { method: 'PUT', body: JSON.stringify({ id_estado }) });
+  return data;
+}
+
+async function apiEliminarCaso(id) {
+  const data = await apiFetch(`/casos/${id}`, { method: 'DELETE' });
+  return data;
 }
 
 /* --------------------------------------------------
@@ -97,8 +123,13 @@ async function apiGetDetective(id) {
   return data.data;
 }
 
+async function apiCrearDetective(payload) {
+  const data = await apiFetch('/detectives', { method: 'POST', body: JSON.stringify(payload) });
+  return data;
+}
+
 /* --------------------------------------------------
-   CRIMINALES
+   CRIMINALES — CRUD
    -------------------------------------------------- */
 async function apiGetCriminales(params = {}) {
   const qs = new URLSearchParams(params).toString();
@@ -111,8 +142,23 @@ async function apiGetCriminal(id) {
   return data.data;
 }
 
+async function apiCrearCriminal(payload) {
+  const data = await apiFetch('/criminales', { method: 'POST', body: JSON.stringify(payload) });
+  return data;
+}
+
+async function apiEditarCriminal(id, payload) {
+  const data = await apiFetch(`/criminales/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
+  return data;
+}
+
+async function apiEliminarCriminal(id) {
+  const data = await apiFetch(`/criminales/${id}`, { method: 'DELETE' });
+  return data;
+}
+
 /* --------------------------------------------------
-   EVIDENCIAS
+   EVIDENCIAS — con subida de archivos
    -------------------------------------------------- */
 async function apiGetEvidencias(params = {}) {
   const qs = new URLSearchParams(params).toString();
@@ -120,13 +166,25 @@ async function apiGetEvidencias(params = {}) {
   return data.data;
 }
 
+async function apiCrearEvidencia(id_caso, tipo, descripcion, archivo = null) {
+  const form = new FormData();
+  form.append('id_caso', id_caso);
+  form.append('tipo', tipo);
+  form.append('descripcion', descripcion);
+  if (archivo) form.append('archivo', archivo);
+  return apiFetchForm('/evidencias', form);
+}
+
+async function apiEliminarEvidencia(id) {
+  const data = await apiFetch(`/evidencias/${id}`, { method: 'DELETE' });
+  return data;
+}
+
 /* --------------------------------------------------
-   LOADER — spinner mientras carga la API
+   LOADERS
    -------------------------------------------------- */
 function mostrarLoader(container, mensaje = '// cargando datos...') {
-  if (typeof container === 'string') {
-    container = document.getElementById(container);
-  }
+  if (typeof container === 'string') container = document.getElementById(container);
   if (container) {
     container.innerHTML = `
       <div style="text-align:center;padding:3rem;color:var(--text3);font-family:var(--mono);font-size:.72rem;">
@@ -149,4 +207,25 @@ function mostrarError(container, msg = '// error al conectar con la API') {
         </span>
       </div>`;
   }
+}
+
+/* --------------------------------------------------
+   NOTAS Y PISTAS — guardadas en MySQL
+   -------------------------------------------------- */
+async function apiGetNotas() {
+  const data = await apiFetch('/notas');
+  return data.data;
+}
+
+async function apiCrearNota(tipo, contenido, caso_relacionado = null) {
+  const data = await apiFetch('/notas', {
+    method: 'POST',
+    body: JSON.stringify({ tipo, contenido, caso_relacionado }),
+  });
+  return data;
+}
+
+async function apiEliminarNota(id_nota) {
+  const data = await apiFetch(`/notas/${id_nota}`, { method: 'DELETE' });
+  return data;
 }

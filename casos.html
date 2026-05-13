@@ -11,6 +11,180 @@
     rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
   <link rel="stylesheet" href="src/css/styles.css">
+  <style>
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .7rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: .25rem;
+    }
+
+    .form-group.full {
+      grid-column: 1/-1;
+    }
+
+    .form-label {
+      font-size: .52rem;
+      color: var(--text3);
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-family: var(--title);
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-bottom: 1px solid var(--cyan3);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: .7rem;
+      padding: .48rem .7rem;
+      outline: none;
+      transition: all .2s;
+      width: 100%;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      border-color: var(--cyan);
+      background: rgba(0, 200, 224, .04);
+    }
+
+    .form-select option {
+      background: var(--panel);
+      color: var(--text);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 80px;
+      font-family: var(--cond);
+    }
+
+    .etiquetas-check {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      margin-top: .2rem;
+    }
+
+    .etiq-item {
+      display: flex;
+      align-items: center;
+      gap: .25rem;
+      font-size: .58rem;
+      color: var(--text2);
+      cursor: pointer;
+    }
+
+    .etiq-item input {
+      accent-color: var(--cyan);
+    }
+
+    .btn-primary {
+      background: transparent;
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      font-family: var(--title);
+      font-size: .72rem;
+      font-weight: 700;
+      padding: .5rem 1.2rem;
+      cursor: pointer;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      transition: all .25s;
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+    }
+
+    .btn-primary:hover {
+      background: var(--cyan);
+      color: var(--bg);
+    }
+
+    .btn-danger {
+      background: transparent;
+      border: 1px solid var(--red);
+      color: var(--red);
+      font-family: var(--title);
+      font-size: .62rem;
+      font-weight: 600;
+      padding: .35rem .8rem;
+      cursor: pointer;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      transition: all .2s;
+      display: inline-flex;
+      align-items: center;
+      gap: .25rem;
+    }
+
+    .btn-danger:hover {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .btn-warn {
+      background: transparent;
+      border: 1px solid var(--amber);
+      color: var(--amber);
+      font-family: var(--title);
+      font-size: .62rem;
+      font-weight: 600;
+      padding: .35rem .8rem;
+      cursor: pointer;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      transition: all .2s;
+      display: inline-flex;
+      align-items: center;
+      gap: .25rem;
+    }
+
+    .btn-warn:hover {
+      background: var(--amber);
+      color: var(--bg);
+    }
+
+    .btn-sm {
+      font-size: .55rem;
+      padding: .28rem .6rem;
+    }
+
+    .form-err {
+      color: #f87171;
+      font-size: .58rem;
+      margin-top: .4rem;
+      font-family: var(--mono);
+    }
+
+    .form-ok {
+      color: #4ade80;
+      font-size: .58rem;
+      margin-top: .4rem;
+      font-family: var(--mono);
+    }
+
+    .estado-select {
+      background: var(--panel);
+      border: 1px solid var(--cyan3);
+      color: var(--cyan);
+      font-family: var(--mono);
+      font-size: .62rem;
+      padding: .25rem .5rem;
+      outline: none;
+      cursor: pointer;
+    }
+  </style>
   <script>(function () { const t = sessionStorage.getItem('nexus_theme') || 'dark'; document.documentElement.setAttribute('data-theme', t); })();</script>
 </head>
 
@@ -19,31 +193,34 @@
   <div class="page-hero">
     <div class="hero-tag">MÓDULO DE EXPEDIENTES</div>
     <div class="ph-title">Expedientes de <span>Casos</span></div>
-    <div class="ph-sub" id="ph-sub"></div>
+    <div class="ph-sub" id="ph-sub">Cargando...</div>
   </div>
   <div class="content-area">
     <div class="toolbar">
-      <div class="search-wrap"><i class="ti ti-search search-icon" aria-hidden="true"></i><input class="search-box"
-          id="caso-search" placeholder="// buscar caso, descripción, zona, etiqueta..." oninput="renderTabla()"></div>
+      <div class="search-wrap"><i class="ti ti-search search-icon"></i><input class="search-box" id="caso-search"
+          placeholder="// buscar caso, descripción, etiqueta..." oninput="renderTabla()"></div>
       <button class="flt-btn act" onclick="setFiltro('todos',this)">Todos</button>
       <button class="flt-btn" onclick="setFiltro('Abierto',this)">Abiertos</button>
       <button class="flt-btn" onclick="setFiltro('En investigación',this)">Investigando</button>
       <button class="flt-btn" onclick="setFiltro('Cerrado',this)">Cerrados</button>
+      <button class="btn-primary" onclick="abrirFormNuevoCaso()" style="margin-left:auto;">
+        <i class="ti ti-plus"></i> Nuevo Caso
+      </button>
     </div>
-    <div style="font-size:.52rem;color:var(--text3);font-family:var(--mono);margin-bottom:.5rem;">// click en cualquier
-      fila para ver el detalle completo del caso</div>
+    <div style="font-size:.52rem;color:var(--text3);font-family:var(--mono);margin-bottom:.5rem;">// click en fila para
+      ver detalle · usa los botones de la fila para editar estado o eliminar</div>
     <div class="tbl-wrap" id="tabla-container"></div>
   </div>
+
   <script src="src/js/api.js"></script>
   <script src="src/js/app.js"></script>
   <script>
     initNav('casos');
-    mostrarLoader('tabla-container');
-    let filtroEstado = 'todos', todosLosCasos = [];
+    let filtroEstado = 'todos', todosLosCasos = [], catalogos = null;
 
     async function init() {
       try {
-        todosLosCasos = await apiGetCasos();
+        [todosLosCasos, catalogos] = await Promise.all([apiGetCasos(), apiGetCatalogos()]);
         document.getElementById('ph-sub').textContent = `${todosLosCasos.length} registros · Base de datos · División Metropolitana GDL`;
         renderTabla();
       } catch (e) { mostrarError('tabla-container'); }
@@ -57,25 +234,205 @@
       if (filtroEstado !== 'todos') lista = lista.filter(c => c.estado === filtroEstado);
       if (q) lista = lista.filter(c => c.asunto.toLowerCase().includes(q) || c.descripcion?.toLowerCase().includes(q) || (c.etiquetas || []).some(t => t.includes(q)));
       const cont = document.getElementById('tabla-container');
-      if (!lista.length) { cont.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--text3);font-family:var(--mono);font-size:.75rem;">// sin resultados</div>`; return; }
-      cont.innerHTML = `<table class="tbl"><thead><tr><th style="width:4.5rem">ID</th><th>Caso</th><th>Detective</th><th>Fecha</th><th>Estado</th><th>Presupuesto</th><th>Etiquetas</th></tr></thead><tbody>${lista.map(c => `<tr onclick="abrirCasoAPI(${c.id_caso})"><td style="font-family:var(--mono);color:var(--text3);">C-${padId(c.id_caso)}</td><td><div class="tbl-title">${c.asunto}</div><div class="tbl-desc">${c.descripcion || ''}</div></td><td style="color:var(--text2);font-size:.6rem;">${c.detective || '—'}</td><td style="color:var(--text3);font-size:.6rem;white-space:nowrap;font-family:var(--mono);">${c.fecha_apertura?.split('T')[0] || ''}</td><td>${badge(c.estado)}</td><td class="budget">$${fmt(Number(c.presupuesto) || 0)}</td><td>${(c.etiquetas || []).map(t => `<span class="tag">${t}</span>`).join('')}</td></tr>`).join('')}</tbody></table>`;
+      if (!lista.length) { cont.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--text3);font-family:var(--mono);">// sin resultados</div>`; return; }
+      cont.innerHTML = `<table class="tbl"><thead><tr>
+        <th style="width:4.5rem">ID</th><th>Caso</th><th>Detective</th><th>Fecha</th>
+        <th>Estado</th><th>Presupuesto</th><th>Etiquetas</th><th style="width:7rem">Acciones</th>
+      </tr></thead><tbody>${lista.map(c => `
+        <tr onclick="abrirCasoAPI(${c.id_caso})">
+          <td style="font-family:var(--mono);color:var(--text3);">C-${padId(c.id_caso)}</td>
+          <td><div class="tbl-title">${c.asunto}</div><div class="tbl-desc">${c.descripcion || ''}</div></td>
+          <td style="color:var(--text2);font-size:.6rem;">${c.detective || '—'}</td>
+          <td style="color:var(--text3);font-size:.6rem;white-space:nowrap;font-family:var(--mono);">${c.fecha_apertura?.split('T')[0] || ''}</td>
+          <td>
+            <select class="estado-select" onchange="cambiarEstado(${c.id_caso},this.value)" onclick="event.stopPropagation()">
+              ${(catalogos?.estados || []).map(e => `<option value="${e.id_estado}" ${e.nombre_estado === c.estado ? 'selected' : ''}>${e.nombre_estado}</option>`).join('')}
+            </select>
+          </td>
+          <td class="budget">$${fmt(Number(c.presupuesto) || 0)}</td>
+          <td>${(c.etiquetas || []).map(t => `<span class="tag">${t}</span>`).join('')}</td>
+          <td onclick="event.stopPropagation()" style="white-space:nowrap;">
+            <button class="btn-warn btn-sm" onclick="abrirFormEditarCaso(${c.id_caso})" title="Editar"><i class="ti ti-edit"></i></button>
+            <button class="btn-danger btn-sm" onclick="confirmarEliminarCaso(${c.id_caso},'${c.asunto.replace(/'/g, "\\'")}')"><i class="ti ti-trash"></i></button>
+          </td>
+        </tr>`).join('')}</tbody></table>`;
     }
 
+    async function cambiarEstado(id_caso, id_estado) {
+      try {
+        await apiCambiarEstadoCaso(id_caso, id_estado);
+        todosLosCasos = await apiGetCasos();
+        renderTabla();
+      } catch (e) { alert('Error al cambiar estado: ' + e.message); }
+    }
+
+    /* ── MODAL DETALLE ── */
     async function abrirCasoAPI(id) {
       try {
-        mostrarLoader('tabla-container', '// cargando expediente...');
         const c = await apiGetCaso(id);
-        renderTabla(); // restaurar tabla
-        _modal(c);
-      } catch (e) { renderTabla(); }
+        const inv = c.involucrados?.length ? c.involucrados.map(p => `<div class="involucrado-row"><div class="det-av">${ini(p.nombre)}</div><div style="flex:1"><div style="font-family:var(--title);font-size:.72rem;font-weight:600;color:var(--white);">${p.nombre}</div><div style="font-size:.54rem;color:var(--text2);margin-top:.1rem;font-style:italic;">${p.declaracion || ''}</div></div><span class="rol-badge rol-${p.rol}">${p.rol}</span></div>`).join('') : `<div style="font-size:.56rem;color:var(--text3);font-family:var(--mono);">// sin involucrados</div>`;
+        const ev = c.evidencias?.length ? c.evidencias.map(e => `<div class="evid-mini"><div class="evid-icon" style="width:28px;height:28px;font-size:.85rem;"><i class="ti ${evIconClass(e.tipo)}"></i></div><div style="flex:1"><div class="evid-type" style="font-size:.44rem;">${e.tipo}</div><div style="font-size:.6rem;color:var(--white);">${e.descripcion}</div>${e.ruta_archivo ? `<div class="evid-path">${e.ruta_archivo}</div>` : `<div class="evid-nofile">// física</div>`}</div><div style="font-size:.42rem;color:var(--text3);font-family:var(--mono);">EV-${padId(e.id_evidencia, 4)}</div></div>`).join('') : `<div style="font-size:.56rem;color:var(--text3);font-family:var(--mono);">// sin evidencias</div>`;
+        document.body.insertAdjacentHTML('beforeend', `<div class="overlay open" id="caso-overlay" onclick="cerrarModal('caso-overlay','caso-modal')"><div class="modal" id="caso-modal" onclick="event.stopPropagation()"><div class="modal-head"><div><div class="modal-title">${c.asunto}</div><div class="modal-sub">C-${padId(c.id_caso)} · ${c.fecha_apertura?.split('T')[0] || ''}</div></div><button class="modal-close" onclick="cerrarModal('caso-overlay','caso-modal')"><i class="ti ti-x"></i></button></div><div class="modal-body"><div><div class="modal-section-title">Información General</div><div class="info-grid"><div class="info-cell"><div class="info-label">Estado</div><div class="info-value"><span class="badge ${badge(c.estado).match(/b-\w+/)?.[0] || 'b-susp'}">${c.estado}</span></div></div><div class="info-cell"><div class="info-label">Detective</div><div class="info-value cyan">${c.detective || '—'}</div></div><div class="info-cell"><div class="info-label">Presupuesto</div><div class="info-value cyan">$${fmt(Number(c.presupuesto) || 0)}</div></div><div class="info-cell"><div class="info-label">Departamento</div><div class="info-value">${c.dpto || '—'}</div></div><div class="info-cell"><div class="info-label">Fecha apertura</div><div class="info-value">${c.fecha_apertura?.split('T')[0] || '—'}</div></div><div class="info-cell"><div class="info-label">Etiquetas</div><div class="info-value">${(c.etiquetas || []).map(t => `<span class="tag">${t}</span>`).join('') || '—'}</div></div></div></div><div><div class="modal-section-title">Descripción</div><div style="background:var(--panel);border:1px solid var(--border);border-left:2px solid var(--cyan3);padding:.75rem .9rem;font-size:.65rem;color:var(--text);line-height:1.7;">${c.descripcion || '—'}</div></div><div><div class="modal-section-title">Involucrados (${c.involucrados?.length || 0})</div>${inv}</div><div><div class="modal-section-title">Evidencias (${c.evidencias?.length || 0})</div>${ev}</div></div></div></div>`);
+      } catch (e) { console.error(e); }
     }
 
-    function _modal(c) {
-      const inv = c.involucrados?.length ? c.involucrados.map(p => `<div class="involucrado-row"><div class="det-av">${ini(p.nombre)}</div><div style="flex:1"><div style="font-family:var(--title);font-size:.72rem;font-weight:600;color:var(--white);">${p.nombre}</div><div style="font-size:.54rem;color:var(--text2);margin-top:.1rem;font-style:italic;">${p.declaracion || ''}</div></div><span class="rol-badge rol-${p.rol}">${p.rol}</span></div>`).join('') : `<div style="font-size:.56rem;color:var(--text3);font-family:var(--mono);">// sin involucrados</div>`;
-      const ev = c.evidencias?.length ? c.evidencias.map(e => `<div class="evid-mini"><div class="evid-icon" style="width:28px;height:28px;font-size:.85rem;"><i class="ti ${evIconClass(e.tipo)}"></i></div><div style="flex:1"><div class="evid-type" style="font-size:.44rem;">${e.tipo}</div><div style="font-size:.6rem;color:var(--white);">${e.descripcion}</div>${e.ruta_archivo ? `<div class="evid-path">${e.ruta_archivo}</div>` : `<div class="evid-nofile">// evidencia física</div>`}</div><div style="font-size:.42rem;color:var(--text3);font-family:var(--mono);">EV-${padId(e.id_evidencia, 4)}</div></div>`).join('') : `<div style="font-size:.56rem;color:var(--text3);font-family:var(--mono);">// sin evidencias</div>`;
-      document.body.insertAdjacentHTML('beforeend', `<div class="overlay open" id="caso-overlay" onclick="cerrarModal('caso-overlay','caso-modal')"><div class="modal" id="caso-modal" onclick="event.stopPropagation()"><div class="modal-head"><div><div class="modal-title">${c.asunto}</div><div class="modal-sub">C-${padId(c.id_caso)} · ${c.fecha_apertura?.split('T')[0] || ''}</div></div><button class="modal-close" onclick="cerrarModal('caso-overlay','caso-modal')"><i class="ti ti-x"></i></button></div><div class="modal-body"><div><div class="modal-section-title">Información General</div><div class="info-grid"><div class="info-cell"><div class="info-label">Estado</div><div class="info-value">${badge(c.estado)}</div></div><div class="info-cell"><div class="info-label">Detective</div><div class="info-value cyan">${c.detective || '—'}</div></div><div class="info-cell"><div class="info-label">Presupuesto</div><div class="info-value cyan">$${fmt(Number(c.presupuesto) || 0)}</div></div><div class="info-cell"><div class="info-label">Departamento</div><div class="info-value">${c.dpto || '—'}</div></div><div class="info-cell"><div class="info-label">Fecha apertura</div><div class="info-value">${c.fecha_apertura?.split('T')[0] || '—'}</div></div><div class="info-cell"><div class="info-label">Etiquetas</div><div class="info-value">${(c.etiquetas || []).map(t => `<span class="tag">${t}</span>`).join('') || '—'}</div></div></div></div><div><div class="modal-section-title">Descripción</div><div style="background:var(--panel);border:1px solid var(--border);border-left:2px solid var(--cyan3);padding:.75rem .9rem;font-size:.65rem;color:var(--text);line-height:1.7;">${c.descripcion || '—'}</div></div><div><div class="modal-section-title">Involucrados (${c.involucrados?.length || 0})</div>${inv}</div><div><div class="modal-section-title">Evidencias (${c.evidencias?.length || 0})</div>${ev}</div></div></div></div>`);
+    /* ── FORM NUEVO CASO ── */
+    function abrirFormNuevoCaso() {
+      const estados = (catalogos?.estados || []).map(e => `<option value="${e.id_estado}">${e.nombre_estado}</option>`).join('');
+      const dets = (catalogos?.detectives || []).map(d => `<option value="${d.id_detective}">${d.nombre}</option>`).join('');
+      const etiquetas = (catalogos?.etiquetas || []).map(e => `<label class="etiq-item"><input type="checkbox" value="${e.id_etiqueta}"> ${e.nombre}</label>`).join('');
+      document.body.insertAdjacentHTML('beforeend', `
+        <div class="overlay open" id="form-overlay" onclick="cerrarModal('form-overlay','form-modal')">
+          <div class="modal" id="form-modal" onclick="event.stopPropagation()" style="max-width:580px;">
+            <div class="modal-head">
+              <div><div class="modal-title">Nuevo Caso</div><div class="modal-sub">// Registrar expediente en la base de datos</div></div>
+              <button class="modal-close" onclick="cerrarModal('form-overlay','form-modal')"><i class="ti ti-x"></i></button>
+            </div>
+            <div class="modal-body">
+              <div class="form-grid">
+                <div class="form-group full">
+                  <label class="form-label">Asunto *</label>
+                  <input class="form-input" id="f-asunto" placeholder="// nombre del caso">
+                </div>
+                <div class="form-group full">
+                  <label class="form-label">Descripción</label>
+                  <textarea class="form-textarea" id="f-desc" placeholder="// descripción detallada del caso"></textarea>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Detective a cargo *</label>
+                  <select class="form-select" id="f-detective"><option value="">-- Seleccionar --</option>${dets}</select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Estado inicial</label>
+                  <select class="form-select" id="f-estado">${estados}</select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Presupuesto ($)</label>
+                  <input class="form-input" id="f-presupuesto" type="number" placeholder="0.00" min="0">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Etiquetas</label>
+                  <div class="etiquetas-check" id="f-etiquetas">${etiquetas}</div>
+                </div>
+              </div>
+              <div id="form-msg" style="min-height:.8rem;margin-top:.3rem;"></div>
+              <div style="display:flex;justify-content:flex-end;gap:.6rem;margin-top:.8rem;">
+                <button class="btn-warn" onclick="cerrarModal('form-overlay','form-modal')">Cancelar</button>
+                <button class="btn-primary" onclick="guardarNuevoCaso()"><i class="ti ti-device-floppy"></i> Guardar Caso</button>
+              </div>
+            </div>
+          </div>
+        </div>`);
     }
 
+    async function guardarNuevoCaso() {
+      const asunto = document.getElementById('f-asunto').value.trim();
+      const desc = document.getElementById('f-desc').value.trim();
+      const det = document.getElementById('f-detective').value;
+      const estado = document.getElementById('f-estado').value;
+      const presup = document.getElementById('f-presupuesto').value;
+      const etqs = [...document.querySelectorAll('#f-etiquetas input:checked')].map(i => Number(i.value));
+      const msg = document.getElementById('form-msg');
+      if (!asunto || !det) { msg.innerHTML = `<span class="form-err">// Asunto y detective son requeridos</span>`; return; }
+      msg.innerHTML = `<span style="color:var(--cyan);font-size:.58rem;font-family:var(--mono);">// guardando...</span>`;
+      try {
+        await apiCrearCaso({ asunto, descripcion: desc || null, id_det_cargo: Number(det), id_estado: Number(estado) || 1, presupuesto: Number(presup) || 0, etiquetas: etqs });
+        msg.innerHTML = `<span class="form-ok">// caso registrado correctamente</span>`;
+        todosLosCasos = await apiGetCasos();
+        document.getElementById('ph-sub').textContent = `${todosLosCasos.length} registros · Base de datos · División Metropolitana GDL`;
+        renderTabla();
+        setTimeout(() => cerrarModal('form-overlay', 'form-modal'), 800);
+      } catch (e) { msg.innerHTML = `<span class="form-err">// Error: ${e.message}</span>`; }
+    }
+
+    /* ── FORM EDITAR CASO ── */
+    async function abrirFormEditarCaso(id) {
+      const c = await apiGetCaso(id);
+      const dets = (catalogos?.detectives || []).map(d => `<option value="${d.id_detective}" ${d.id_detective === c.det_id ? 'selected' : ''}>${d.nombre}</option>`).join('');
+      const estados = (catalogos?.estados || []).map(e => `<option value="${e.id_estado}" ${e.nombre_estado === c.estado ? 'selected' : ''}>${e.nombre_estado}</option>`).join('');
+      const etiquetas = (catalogos?.etiquetas || []).map(e => `<label class="etiq-item"><input type="checkbox" value="${e.id_etiqueta}" ${(c.etiquetas || []).includes(e.nombre) ? 'checked' : ''}> ${e.nombre}</label>`).join('');
+      document.body.insertAdjacentHTML('beforeend', `
+        <div class="overlay open" id="edit-overlay" onclick="cerrarModal('edit-overlay','edit-modal')">
+          <div class="modal" id="edit-modal" onclick="event.stopPropagation()" style="max-width:580px;">
+            <div class="modal-head">
+              <div><div class="modal-title">Editar Caso</div><div class="modal-sub">C-${padId(c.id_caso)} · ${c.asunto}</div></div>
+              <button class="modal-close" onclick="cerrarModal('edit-overlay','edit-modal')"><i class="ti ti-x"></i></button>
+            </div>
+            <div class="modal-body">
+              <div class="form-grid">
+                <div class="form-group full"><label class="form-label">Asunto</label><input class="form-input" id="e-asunto" value="${c.asunto}"></div>
+                <div class="form-group full"><label class="form-label">Descripción</label><textarea class="form-textarea" id="e-desc">${c.descripcion || ''}</textarea></div>
+                <div class="form-group"><label class="form-label">Detective a cargo</label><select class="form-select" id="e-detective">${dets}</select></div>
+                <div class="form-group"><label class="form-label">Estado</label><select class="form-select" id="e-estado">${estados}</select></div>
+                <div class="form-group"><label class="form-label">Presupuesto ($)</label><input class="form-input" id="e-presupuesto" type="number" value="${c.presupuesto || 0}"></div>
+                <div class="form-group"><label class="form-label">Etiquetas</label><div class="etiquetas-check" id="e-etiquetas">${etiquetas}</div></div>
+              </div>
+              <div id="edit-msg" style="min-height:.8rem;margin-top:.3rem;"></div>
+              <div style="display:flex;justify-content:flex-end;gap:.6rem;margin-top:.8rem;">
+                <button class="btn-warn" onclick="cerrarModal('edit-overlay','edit-modal')">Cancelar</button>
+                <button class="btn-primary" onclick="guardarEdicionCaso(${c.id_caso})"><i class="ti ti-device-floppy"></i> Guardar Cambios</button>
+              </div>
+            </div>
+          </div>
+        </div>`);
+    }
+
+    async function guardarEdicionCaso(id) {
+      const asunto = document.getElementById('e-asunto').value.trim();
+      const desc = document.getElementById('e-desc').value.trim();
+      const det = document.getElementById('e-detective').value;
+      const estado = document.getElementById('e-estado').value;
+      const presup = document.getElementById('e-presupuesto').value;
+      const etqs = [...document.querySelectorAll('#e-etiquetas input:checked')].map(i => Number(i.value));
+      const msg = document.getElementById('edit-msg');
+      msg.innerHTML = `<span style="color:var(--cyan);font-size:.58rem;font-family:var(--mono);">// guardando...</span>`;
+      try {
+        await apiEditarCaso(id, { asunto, descripcion: desc || null, id_det_cargo: Number(det), id_estado: Number(estado), presupuesto: Number(presup) || 0, etiquetas: etqs });
+        msg.innerHTML = `<span class="form-ok">// caso actualizado correctamente</span>`;
+        todosLosCasos = await apiGetCasos();
+        renderTabla();
+        setTimeout(() => cerrarModal('edit-overlay', 'edit-modal'), 800);
+      } catch (e) { msg.innerHTML = `<span class="form-err">// Error: ${e.message}</span>`; }
+    }
+
+    /* ── ELIMINAR CASO ── */
+    function confirmarEliminarCaso(id, asunto) {
+      document.body.insertAdjacentHTML('beforeend', `
+        <div class="overlay open" id="del-overlay" onclick="cerrarModal('del-overlay','del-modal')">
+          <div class="modal" id="del-modal" onclick="event.stopPropagation()" style="max-width:420px;">
+            <div class="modal-head">
+              <div><div class="modal-title" style="color:#f87171;">Eliminar Caso</div></div>
+              <button class="modal-close" onclick="cerrarModal('del-overlay','del-modal')"><i class="ti ti-x"></i></button>
+            </div>
+            <div class="modal-body">
+              <div style="font-size:.72rem;color:var(--text);line-height:1.6;">
+                ¿Estás seguro de que deseas eliminar el caso <b style="color:#f87171;">"${asunto}"</b>?<br>
+                <span style="font-size:.62rem;color:var(--text3);">Esta acción eliminará también todas las evidencias y etiquetas vinculadas. No se puede deshacer.</span>
+              </div>
+              <div id="del-msg" style="min-height:.8rem;margin-top:.5rem;"></div>
+              <div style="display:flex;justify-content:flex-end;gap:.6rem;margin-top:1rem;">
+                <button class="btn-primary" onclick="cerrarModal('del-overlay','del-modal')">Cancelar</button>
+                <button class="btn-danger" onclick="ejecutarEliminarCaso(${id})"><i class="ti ti-trash"></i> Sí, eliminar</button>
+              </div>
+            </div>
+          </div>
+        </div>`);
+    }
+
+    async function ejecutarEliminarCaso(id) {
+      const msg = document.getElementById('del-msg');
+      msg.innerHTML = `<span style="color:var(--cyan);font-size:.58rem;font-family:var(--mono);">// eliminando...</span>`;
+      try {
+        await apiEliminarCaso(id);
+        msg.innerHTML = `<span class="form-ok">// caso eliminado</span>`;
+        todosLosCasos = await apiGetCasos();
+        document.getElementById('ph-sub').textContent = `${todosLosCasos.length} registros · Base de datos · División Metropolitana GDL`;
+        renderTabla();
+        setTimeout(() => cerrarModal('del-overlay', 'del-modal'), 700);
+      } catch (e) { msg.innerHTML = `<span class="form-err">// Error: ${e.message}</span>`; }
+    }
+
+    function badge(e) { const m = { 'Abierto': 'b-open', 'En investigación': 'b-inv', 'Cerrado': 'b-closed' }; return `<span class="badge ${m[e] || 'b-susp'}">${e}</span>`; }
     init();
   </script>
 </body>

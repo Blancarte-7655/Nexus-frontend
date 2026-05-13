@@ -25,14 +25,14 @@
     }
 
     .progress-label {
-      font-size: .54rem;
+      font-size: .56rem;
       color: var(--text2);
       letter-spacing: .08em;
     }
 
     .progress-pct {
       font-family: var(--mono);
-      font-size: .58rem;
+      font-size: .6rem;
       color: var(--cyan);
       font-weight: 700;
     }
@@ -49,28 +49,6 @@
       height: 100%;
       background: linear-gradient(90deg, var(--cyan3), var(--cyan));
       transition: width 1s ease;
-      position: relative;
-    }
-
-    .progress-bar-fill::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      width: 20px;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .25));
-      animation: shimmerBar 2s linear infinite;
-    }
-
-    @keyframes shimmerBar {
-      0% {
-        right: 100%;
-      }
-
-      100% {
-        right: -20px;
-      }
     }
 
     .progress-bar-fill.cerrado {
@@ -93,25 +71,9 @@
       overflow: hidden;
     }
 
-    .caso-progress-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
-      opacity: 0;
-      transition: opacity .25s;
-    }
-
     .caso-progress-card:hover {
       border-left-color: var(--cyan);
       transform: translateX(3px);
-    }
-
-    .caso-progress-card:hover::before {
-      opacity: 1;
     }
 
     .caso-progress-card.estado-cerrado {
@@ -128,14 +90,14 @@
 
     .caso-card-id {
       font-family: var(--mono);
-      font-size: .52rem;
+      font-size: .54rem;
       color: var(--text3);
       margin-bottom: .15rem;
     }
 
     .caso-card-title {
       font-family: var(--title);
-      font-size: .88rem;
+      font-size: .9rem;
       font-weight: 700;
       color: var(--white);
       letter-spacing: .04em;
@@ -159,13 +121,8 @@
       display: flex;
       align-items: center;
       gap: .28rem;
-      font-size: .54rem;
+      font-size: .56rem;
       color: var(--text2);
-    }
-
-    .caso-card-meta-item i {
-      color: var(--cyan3);
-      font-size: .75rem;
     }
 
     .avance-resumen {
@@ -190,30 +147,133 @@
     }
 
     .avance-mini-lbl {
-      font-size: .48rem;
+      font-size: .5rem;
       color: var(--text3);
       letter-spacing: .12em;
       text-transform: uppercase;
       margin-top: .2rem;
+    }
+
+    .nota-bd {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-left: 2px solid var(--cyan);
+      padding: .7rem .85rem;
+      margin-bottom: .4rem;
+      position: relative;
+      transition: all .2s;
+      animation: fadeInUp .3s both;
+    }
+
+    .nota-bd.pista {
+      border-left-color: var(--amber);
+    }
+
+    .nota-bd:hover {
+      transform: translateX(2px);
+    }
+
+    .nota-bd-texto {
+      font-size: .64rem;
+      color: var(--text);
+      line-height: 1.6;
+      padding-right: 1.5rem;
+    }
+
+    .nota-bd-meta {
+      font-size: .46rem;
+      color: var(--text3);
+      font-family: var(--mono);
+      margin-top: .2rem;
+    }
+
+    .nota-bd-del {
+      position: absolute;
+      top: .5rem;
+      right: .5rem;
+      background: transparent;
+      border: none;
+      color: var(--text3);
+      cursor: pointer;
+      font-size: .85rem;
+      transition: color .2s;
+    }
+
+    .nota-bd-del:hover {
+      color: var(--red);
+    }
+
+    .nota-input {
+      width: 100%;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-bottom: 1px solid var(--cyan3);
+      color: var(--text);
+      font-family: var(--cond);
+      font-size: .68rem;
+      padding: .55rem .75rem;
+      outline: none;
+      resize: vertical;
+      margin-bottom: .4rem;
+      transition: all .2s;
+    }
+
+    .nota-input:focus {
+      border-color: var(--cyan);
+      background: rgba(0, 200, 224, .03);
+    }
+
+    .nota-input::placeholder {
+      color: var(--text3);
+    }
+
+    .add-btn {
+      background: transparent;
+      border: 1px solid var(--cyan3);
+      color: var(--cyan);
+      font-family: var(--title);
+      font-size: .65rem;
+      font-weight: 600;
+      padding: .38rem 1rem;
+      cursor: pointer;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      transition: all .2s;
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+    }
+
+    .add-btn:hover {
+      background: var(--cyan4);
+      border-color: var(--cyan);
+    }
+
+    .saving-indicator {
+      font-size: .52rem;
+      color: var(--cyan);
+      font-family: var(--mono);
+      margin-left: .5rem;
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    .saving-indicator.show {
+      opacity: 1;
     }
   </style>
 </head>
 
 <body>
   <div id="nav-container"></div>
-
   <div class="page-hero">
     <div class="hero-tag">MÓDULO DE AGENTE</div>
     <div class="ph-title">Perfil del <span>Agente</span></div>
     <div class="ph-sub" id="ph-sub"></div>
   </div>
-
   <div class="content-area" id="perfil-content">
-    <div style="text-align:center;padding:3rem;color:var(--text3);font-family:var(--mono);font-size:.72rem;">
-      <div
-        style="width:24px;height:24px;border:2px solid var(--cyan3);border-top-color:var(--cyan);border-radius:50%;animation:spinSlow .8s linear infinite;margin:0 auto .8rem;">
-      </div>
-      // cargando perfil...
+    <div class="loader-wrap">
+      <div class="loader-spin"></div>// cargando perfil...
     </div>
   </div>
 
@@ -223,45 +283,13 @@
     initNav('perfil');
     const user = window._currentUser;
     if (!user) window.location.href = 'login.html';
+
     document.getElementById('ph-sub').textContent = `${user.nombre} · ${user.rango} · ${user.dpto}`;
 
-    /* ── Notas y pistas locales ── */
-    const getNots = () => JSON.parse(sessionStorage.getItem('nexus_notas') || '[]');
-    const getPistas = () => JSON.parse(sessionStorage.getItem('nexus_pistas') || '[]');
-    const saveNots = d => sessionStorage.setItem('nexus_notas', JSON.stringify(d));
-    const savePistas = d => sessionStorage.setItem('nexus_pistas', JSON.stringify(d));
-
-    function renderNots() {
-      const el = document.getElementById('notas-lista'); const notas = getNots(); if (!el) return;
-      el.innerHTML = notas.length ? notas.map((n, i) => `<div class="nota-item"><button class="nota-del" onclick="borrarNota(${i})" title="Eliminar"><i class="ti ti-x"></i></button><div class="nota-fecha">${n.fecha}</div><div class="nota-texto">${n.texto}</div></div>`).join('')
-        : `<div style="font-size:.58rem;color:var(--text3);font-family:var(--mono);padding:.4rem 0;">// sin notas en esta sesión</div>`;
-    }
-    function renderPistas() {
-      const el = document.getElementById('pistas-lista'); const pistas = getPistas(); if (!el) return;
-      el.innerHTML = pistas.length ? pistas.map((p, i) => `<div class="pista-item"><button class="nota-del" onclick="borrarPista(${i})" title="Eliminar"><i class="ti ti-x"></i></button><div class="pista-texto">${p.texto}</div><div class="pista-caso">// caso: ${p.caso}</div></div>`).join('')
-        : `<div style="font-size:.58rem;color:var(--text3);font-family:var(--mono);padding:.4rem 0;">// sin pistas registradas</div>`;
-    }
-    function borrarNota(i) { const n = getNots(); n.splice(i, 1); saveNots(n); renderNots(); }
-    function borrarPista(i) { const p = getPistas(); p.splice(i, 1); savePistas(p); renderPistas(); }
-    function agregarNota() {
-      const t = document.getElementById('nueva-nota').value.trim(); if (!t) return;
-      const notas = getNots();
-      const fecha = new Date().toLocaleString('es-MX', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-      notas.unshift({ texto: t, fecha }); saveNots(notas);
-      document.getElementById('nueva-nota').value = ''; renderNots();
-      const el = document.getElementById('stat-notas'); if (el) el.textContent = notas.length;
-    }
-    function agregarPista() {
-      const t = document.getElementById('nueva-pista').value.trim(); if (!t) return;
-      const c = document.getElementById('pista-caso').value.trim() || 'Sin caso asignado';
-      const pistas = getPistas(); pistas.unshift({ texto: t, caso: c }); savePistas(pistas);
-      document.getElementById('nueva-pista').value = ''; document.getElementById('pista-caso').value = ''; renderPistas();
-    }
-
-    /* ── Progreso ── */
     function calcularProgreso(estado) { return { 'Cerrado': 100, 'En investigación': 60, 'Abierto': 20 }[estado] ?? 20; }
-    function claseEstado(estado) { return { 'Cerrado': 'estado-cerrado', 'En investigación': 'estado-inv', 'Abierto': 'estado-abierto' }[estado] || ''; }
     function claseBarra(estado) { return { 'Cerrado': 'cerrado', 'Abierto': 'abierto' }[estado] || ''; }
+    function claseEstado(estado) { return { 'Cerrado': 'estado-cerrado', 'En investigación': 'estado-inv', 'Abierto': 'estado-abierto' }[estado] || ''; }
+    function diasDesde(fecha) { return Math.floor((Date.now() - new Date(fecha).getTime()) / 86400000); }
 
     function animarBarras() {
       document.querySelectorAll('.progress-bar-fill[data-target]').forEach(b => {
@@ -271,47 +299,105 @@
 
     function renderCasoCard(c) {
       const pct = calcularProgreso(c.estado);
-      const dias = c.fecha_apertura ? Math.floor((Date.now() - new Date(c.fecha_apertura)) / 86400000) : '—';
+      const dias = c.fecha_apertura ? diasDesde(c.fecha_apertura) : '—';
       return `<div class="caso-progress-card ${claseEstado(c.estado)}" onclick="abrirCasoPerfilAPI(${c.id_caso})">
         <div class="caso-card-head">
           <div><div class="caso-card-id">C-${padId(c.id_caso)}</div><div class="caso-card-title">${c.asunto}</div></div>
-          <div>${badge(c.estado)}</div>
+          <span class="badge ${badge(c.estado).match(/b-\w+/)?.[0] || 'b-susp'}">${c.estado}</span>
         </div>
         <div class="progress-wrap">
           <div class="progress-header"><span class="progress-label">Avance del caso</span><span class="progress-pct">${pct}%</span></div>
           <div class="progress-bar-bg"><div class="progress-bar-fill ${claseBarra(c.estado)}" style="width:0%" data-target="${pct}"></div></div>
         </div>
         <div class="caso-card-meta">
-          <div class="caso-card-meta-item"><i class="ti ti-calendar"></i>${c.fecha_apertura?.split('T')[0] || '—'}</div>
-          <div class="caso-card-meta-item"><i class="ti ti-clock"></i>${dias} días activo</div>
-          <div class="caso-card-meta-item"><i class="ti ti-users"></i>${c.involucrados?.length ?? '—'} involucrados</div>
-          <div class="caso-card-meta-item"><i class="ti ti-archive"></i>${c.evidencias?.length ?? '—'} evidencias</div>
+          <div class="caso-card-meta-item"><i class="ti ti-calendar" style="color:var(--cyan3);font-size:.75rem;"></i>${c.fecha_apertura?.split('T')[0] || '—'}</div>
+          <div class="caso-card-meta-item"><i class="ti ti-clock" style="color:var(--cyan3);font-size:.75rem;"></i>${dias} días</div>
+          <div class="caso-card-meta-item"><i class="ti ti-users" style="color:var(--cyan3);font-size:.75rem;"></i>${c.involucrados?.length ?? '—'} involucrados</div>
+          <div class="caso-card-meta-item"><i class="ti ti-archive" style="color:var(--cyan3);font-size:.75rem;"></i>${c.evidencias?.length ?? '—'} evidencias</div>
         </div>
       </div>`;
     }
 
-    /* ── Cargar todo ── */
+    /* ── NOTAS Y PISTAS desde MySQL ── */
+    let todasLasNotas = [];
+
+    function renderNotas() {
+      const notas = todasLasNotas.filter(n => n.tipo === 'Nota');
+      const pistas = todasLasNotas.filter(n => n.tipo === 'Pista');
+      const el_n = document.getElementById('notas-lista');
+      const el_p = document.getElementById('pistas-lista');
+      if (el_n) el_n.innerHTML = notas.length
+        ? notas.map(n => `<div class="nota-bd">
+            <button class="nota-bd-del" onclick="borrarNota(${n.id_nota})" title="Eliminar"><i class="ti ti-x"></i></button>
+            <div class="nota-bd-texto">${n.contenido}</div>
+            <div class="nota-bd-meta">${new Date(n.fecha_creacion).toLocaleString('es-MX', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
+          </div>`).join('')
+        : `<div style="font-size:.58rem;color:var(--text3);font-family:var(--mono);padding:.4rem 0;">// sin notas guardadas</div>`;
+      if (el_p) el_p.innerHTML = pistas.length
+        ? pistas.map(p => `<div class="nota-bd pista">
+            <button class="nota-bd-del" onclick="borrarNota(${p.id_nota})" title="Eliminar"><i class="ti ti-x"></i></button>
+            <div class="nota-bd-texto">${p.contenido}</div>
+            <div class="nota-bd-meta">${p.caso_relacionado ? `// caso: ${p.caso_relacionado} · ` : ''} ${new Date(p.fecha_creacion).toLocaleString('es-MX', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
+          </div>`).join('')
+        : `<div style="font-size:.58rem;color:var(--text3);font-family:var(--mono);padding:.4rem 0;">// sin pistas guardadas</div>`;
+      const cN = document.getElementById('count-notas');
+      const cP = document.getElementById('count-pistas');
+      if (cN) cN.textContent = notas.length;
+      if (cP) cP.textContent = pistas.length;
+    }
+
+    async function agregarNota() {
+      const t = document.getElementById('nueva-nota').value.trim();
+      if (!t) return;
+      const ind = document.getElementById('saving-nota');
+      ind.classList.add('show');
+      try {
+        const res = await apiCrearNota('Nota', t);
+        todasLasNotas.unshift({ id_nota: res.id_nota, tipo: 'Nota', contenido: t, caso_relacionado: null, fecha_creacion: new Date().toISOString() });
+        document.getElementById('nueva-nota').value = '';
+        renderNotas();
+      } catch (e) { alert('Error al guardar: ' + e.message); }
+      finally { ind.classList.remove('show'); }
+    }
+
+    async function agregarPista() {
+      const t = document.getElementById('nueva-pista').value.trim();
+      const c = document.getElementById('pista-caso').value.trim() || null;
+      if (!t) return;
+      const ind = document.getElementById('saving-pista');
+      ind.classList.add('show');
+      try {
+        const res = await apiCrearNota('Pista', t, c);
+        todasLasNotas.unshift({ id_nota: res.id_nota, tipo: 'Pista', contenido: t, caso_relacionado: c, fecha_creacion: new Date().toISOString() });
+        document.getElementById('nueva-pista').value = '';
+        document.getElementById('pista-caso').value = '';
+        renderNotas();
+      } catch (e) { alert('Error al guardar: ' + e.message); }
+      finally { ind.classList.remove('show'); }
+    }
+
+    async function borrarNota(id) {
+      try {
+        await apiEliminarNota(id);
+        todasLasNotas = todasLasNotas.filter(n => n.id_nota !== id);
+        renderNotas();
+      } catch (e) { alert('Error al eliminar: ' + e.message); }
+    }
+
+    /* ── CARGAR PERFIL ── */
     async function cargarPerfil() {
       try {
-        const lista = await apiGetDetectives({ username: user.username });
+        const [lista, notasBD] = await Promise.all([apiGetDetectives(), apiGetNotas()]);
+        todasLasNotas = notasBD;
         const detS = lista.find(d => d.username === user.username);
-        if (!detS) {
-          document.getElementById('perfil-content').innerHTML = `
-            <div style="text-align:center;padding:3rem;color:var(--text3);font-family:var(--mono);font-size:.72rem;">
-              // este usuario no tiene detective asignado en la base de datos
-            </div>`;
-          return;
-        }
-
+        if (!detS) { renderSinDetective(); return; }
         const det = await apiGetDetective(detS.id_detective);
         const casos = await Promise.all((det.casos || []).map(c => apiGetCaso(c.id_caso).catch(() => c)));
-
         const total = casos.length;
         const cerrados = casos.filter(c => c.estado === 'Cerrado').length;
         const enInv = casos.filter(c => c.estado === 'En investigación').length;
         const abiertos = casos.filter(c => c.estado === 'Abierto').length;
         const totalEv = (det.evidencias || []).length;
-        const notasN = getNots().length;
         const pctGlobal = total > 0 ? Math.round((cerrados / total) * 100) : 0;
 
         document.getElementById('perfil-content').innerHTML = `
@@ -334,9 +420,9 @@
           </div>
 
           <div class="perfil-grid">
-
             <!-- COL IZQUIERDA -->
             <div>
+              <!-- Datos -->
               <div class="panel-card" style="margin-bottom:.8rem;">
                 <div class="panel-head"><span class="panel-title"><i class="ti ti-id-badge"></i> Datos del Agente</span></div>
                 <div class="panel-body">
@@ -346,10 +432,10 @@
                   <div class="perfil-info-row"><span class="perfil-info-lbl">Rol</span><span class="perfil-info-val">${user.rol}</span></div>
                   <div class="perfil-info-row"><span class="perfil-info-lbl">Departamento</span><span class="perfil-info-val">${user.dpto}</span></div>
                   <div class="perfil-info-row"><span class="perfil-info-lbl">Estación</span><span class="perfil-info-val">Central GDL</span></div>
-                  <div class="perfil-info-row"><span class="perfil-info-lbl">División</span><span class="perfil-info-val">Metropolitana Jalisco</span></div>
                 </div>
               </div>
 
+              <!-- Resumen avance -->
               <div class="panel-card" style="margin-bottom:.8rem;">
                 <div class="panel-head"><span class="panel-title"><i class="ti ti-chart-bar"></i> Resumen de Avance</span></div>
                 <div class="panel-body">
@@ -365,21 +451,35 @@
                 </div>
               </div>
 
+              <!-- Notas — guardadas en MySQL -->
               <div class="panel-card" style="margin-bottom:.8rem;">
-                <div class="panel-head"><span class="panel-title"><i class="ti ti-notes"></i> Notas Personales</span><span class="panel-count" id="stat-notas">${notasN}</span></div>
+                <div class="panel-head">
+                  <span class="panel-title"><i class="ti ti-notes"></i> Notas Personales</span>
+                  <span class="panel-count" id="count-notas">0</span>
+                </div>
                 <div class="panel-body">
                   <textarea class="nota-input" id="nueva-nota" rows="3" placeholder="// escribe una nota de investigación..."></textarea>
-                  <button class="add-btn" onclick="agregarNota()"><i class="ti ti-plus"></i> Agregar nota</button>
+                  <div style="display:flex;align-items:center;gap:.5rem;">
+                    <button class="add-btn" onclick="agregarNota()"><i class="ti ti-device-floppy"></i> Guardar en BD</button>
+                    <span class="saving-indicator" id="saving-nota">// guardando...</span>
+                  </div>
                   <div style="margin-top:.8rem;" id="notas-lista"></div>
                 </div>
               </div>
 
+              <!-- Pistas — guardadas en MySQL -->
               <div class="panel-card">
-                <div class="panel-head"><span class="panel-title"><i class="ti ti-bulb"></i> Pistas Activas</span></div>
+                <div class="panel-head">
+                  <span class="panel-title"><i class="ti ti-bulb"></i> Pistas Activas</span>
+                  <span class="panel-count" id="count-pistas">0</span>
+                </div>
                 <div class="panel-body">
                   <textarea class="nota-input" id="nueva-pista" rows="2" placeholder="// descripción de la pista..."></textarea>
-                  <input class="nota-input" id="pista-caso" placeholder="// caso relacionado" style="margin-bottom:.4rem;">
-                  <button class="add-btn" onclick="agregarPista()"><i class="ti ti-plus"></i> Agregar pista</button>
+                  <input class="nota-input" id="pista-caso" placeholder="// caso relacionado (ej: Callejón 45)" style="margin-bottom:.4rem;">
+                  <div style="display:flex;align-items:center;gap:.5rem;">
+                    <button class="add-btn" onclick="agregarPista()"><i class="ti ti-device-floppy"></i> Guardar en BD</button>
+                    <span class="saving-indicator" id="saving-pista">// guardando...</span>
+                  </div>
                   <div style="margin-top:.8rem;" id="pistas-lista"></div>
                 </div>
               </div>
@@ -393,71 +493,36 @@
                   <span class="panel-count">${total} caso${total !== 1 ? 's' : ''}</span>
                 </div>
                 <div class="panel-body" id="casos-progreso">
-                  ${total > 0
-            ? casos.map(renderCasoCard).join('')
-            : `<div style="font-size:.58rem;color:var(--text3);font-family:var(--mono);padding:.5rem 0;">// no tienes casos asignados actualmente</div>`
-          }
+                  ${total > 0 ? casos.map(renderCasoCard).join('') : `<div style="font-size:.58rem;color:var(--text3);font-family:var(--mono);">// no tienes casos asignados</div>`}
                 </div>
               </div>
             </div>
-
           </div>`;
 
-        renderNots();
-        renderPistas();
+        renderNotas();
         animarBarras();
-
       } catch (err) {
         console.error(err);
-        document.getElementById('perfil-content').innerHTML = `<div style="text-align:center;padding:3rem;color:#f87171;font-family:var(--mono);font-size:.72rem;"><i class="ti ti-alert-circle" style="font-size:1.5rem;display:block;margin-bottom:.5rem;"></i>// error cargando el perfil<br><span style="font-size:.6rem;color:var(--text3);margin-top:.4rem;display:block;">Verifica que el servidor esté corriendo en localhost:3001</span></div>`;
+        document.getElementById('perfil-content').innerHTML = `<div class="error-wrap"><i class="ti ti-alert-circle" style="font-size:1.5rem;display:block;margin-bottom:.5rem;"></i>// error cargando el perfil</div>`;
       }
     }
 
-    /* Abrir modal de caso desde perfil */
+    function renderSinDetective() {
+      document.getElementById('perfil-content').innerHTML = `<div style="text-align:center;padding:3rem;color:var(--text3);font-family:var(--mono);">// este usuario no tiene detective asignado en la BD</div>`;
+    }
+
+    /* ── Modal caso desde perfil ── */
     async function abrirCasoPerfilAPI(id) {
       try {
         const c = await apiGetCaso(id);
         const pct = calcularProgreso(c.estado);
         const inv = c.involucrados?.length ? c.involucrados.map(p => `<div class="involucrado-row"><div class="det-av">${ini(p.nombre)}</div><div style="flex:1"><div style="font-family:var(--title);font-size:.72rem;font-weight:600;color:var(--white);">${p.nombre}</div><div style="font-size:.54rem;color:var(--text2);margin-top:.1rem;font-style:italic;">${p.declaracion || ''}</div></div><span class="rol-badge rol-${p.rol}">${p.rol}</span></div>`).join('') : `<div style="font-size:.56rem;color:var(--text3);font-family:var(--mono);">// sin involucrados</div>`;
         const ev = c.evidencias?.length ? c.evidencias.map(e => `<div class="evid-mini"><div class="evid-icon" style="width:28px;height:28px;font-size:.85rem;"><i class="ti ${evIconClass(e.tipo)}"></i></div><div style="flex:1"><div class="evid-type" style="font-size:.44rem;">${e.tipo}</div><div style="font-size:.6rem;color:var(--white);">${e.descripcion}</div>${e.ruta_archivo ? `<div class="evid-path">${e.ruta_archivo}</div>` : `<div class="evid-nofile">// física</div>`}</div><div style="font-size:.42rem;color:var(--text3);font-family:var(--mono);">EV-${padId(e.id_evidencia, 4)}</div></div>`).join('') : `<div style="font-size:.56rem;color:var(--text3);font-family:var(--mono);">// sin evidencias</div>`;
-
-        document.body.insertAdjacentHTML('beforeend', `
-          <div class="overlay open" id="caso-overlay" onclick="cerrarModal('caso-overlay','caso-modal')">
-            <div class="modal" id="caso-modal" onclick="event.stopPropagation()">
-              <div class="modal-head">
-                <div><div class="modal-title">${c.asunto}</div><div class="modal-sub">C-${padId(c.id_caso)} · ${c.fecha_apertura?.split('T')[0] || ''}</div></div>
-                <button class="modal-close" onclick="cerrarModal('caso-overlay','caso-modal')"><i class="ti ti-x"></i></button>
-              </div>
-              <div class="modal-body">
-                <div><div class="modal-section-title">Información General</div>
-                <div class="info-grid">
-                  <div class="info-cell"><div class="info-label">Estado</div><div class="info-value">${badge(c.estado)}</div></div>
-                  <div class="info-cell"><div class="info-label">Detective</div><div class="info-value cyan">${c.detective || '—'}</div></div>
-                  <div class="info-cell"><div class="info-label">Presupuesto</div><div class="info-value cyan">$${fmt(Number(c.presupuesto) || 0)}</div></div>
-                  <div class="info-cell"><div class="info-label">Departamento</div><div class="info-value">${c.dpto || '—'}</div></div>
-                  <div class="info-cell"><div class="info-label">Fecha apertura</div><div class="info-value">${c.fecha_apertura?.split('T')[0] || '—'}</div></div>
-                  <div class="info-cell"><div class="info-label">Etiquetas</div><div class="info-value">${(c.etiquetas || []).map(t => `<span class="tag">${t}</span>`).join('') || '—'}</div></div>
-                </div></div>
-                <div><div class="modal-section-title">Avance del Caso</div>
-                <div style="background:var(--panel);border:1px solid var(--border);padding:.8rem 1rem;">
-                  <div class="progress-header"><span class="progress-label">${c.estado}</span><span class="progress-pct">${pct}%</span></div>
-                  <div class="progress-bar-bg" style="height:8px;"><div class="progress-bar-fill ${claseBarra(c.estado)}" style="width:0%;height:8px;" data-target="${pct}"></div></div>
-                  <div style="font-size:.52rem;color:var(--text3);font-family:var(--mono);margin-top:.5rem;">${c.estado === 'Cerrado' ? '✓ Caso cerrado exitosamente' : c.estado === 'En investigación' ? '◈ Investigación activa — recopilando evidencias' : '● Caso abierto — pendiente de avance'}</div>
-                </div></div>
-                <div><div class="modal-section-title">Descripción</div>
-                <div style="background:var(--panel);border:1px solid var(--border);border-left:2px solid var(--cyan3);padding:.75rem .9rem;font-size:.65rem;color:var(--text);line-height:1.7;">${c.descripcion || '—'}</div></div>
-                <div><div class="modal-section-title">Involucrados (${c.involucrados?.length || 0})</div>${inv}</div>
-                <div><div class="modal-section-title">Evidencias (${c.evidencias?.length || 0})</div>${ev}</div>
-              </div>
-            </div>
-          </div>`);
-
-        setTimeout(() => {
-          document.querySelectorAll('#caso-modal .progress-bar-fill[data-target]').forEach(b => { b.style.width = b.getAttribute('data-target') + '%'; });
-        }, 150);
+        document.body.insertAdjacentHTML('beforeend', `<div class="overlay open" id="caso-overlay" onclick="cerrarModal('caso-overlay','caso-modal')"><div class="modal" id="caso-modal" onclick="event.stopPropagation()"><div class="modal-head"><div><div class="modal-title">${c.asunto}</div><div class="modal-sub">C-${padId(c.id_caso)} · ${c.fecha_apertura?.split('T')[0] || ''}</div></div><button class="modal-close" onclick="cerrarModal('caso-overlay','caso-modal')"><i class="ti ti-x"></i></button></div><div class="modal-body"><div><div class="modal-section-title">Información General</div><div class="info-grid"><div class="info-cell"><div class="info-label">Estado</div><div class="info-value">${badge(c.estado)}</div></div><div class="info-cell"><div class="info-label">Detective</div><div class="info-value cyan">${c.detective || '—'}</div></div><div class="info-cell"><div class="info-label">Presupuesto</div><div class="info-value cyan">$${fmt(Number(c.presupuesto) || 0)}</div></div></div></div><div><div class="modal-section-title">Avance</div><div style="background:var(--panel);border:1px solid var(--border);padding:.8rem 1rem;"><div class="progress-header"><span class="progress-label">${c.estado}</span><span class="progress-pct">${pct}%</span></div><div class="progress-bar-bg" style="height:8px;"><div class="progress-bar-fill ${claseBarra(c.estado)}" style="width:${pct}%;height:8px;"></div></div><div style="font-size:.52rem;color:var(--text3);font-family:var(--mono);margin-top:.5rem;">${c.estado === 'Cerrado' ? '✓ Caso cerrado' : c.estado === 'En investigación' ? '◈ Investigación activa' : '● Caso abierto'}</div></div></div><div><div class="modal-section-title">Involucrados</div>${inv}</div><div><div class="modal-section-title">Evidencias</div>${ev}</div></div></div></div>`);
       } catch (e) { console.error(e); }
     }
 
+    function badge(e) { const m = { 'Abierto': 'b-open', 'En investigación': 'b-inv', 'Cerrado': 'b-closed' }; return `<span class="badge ${m[e] || 'b-susp'}">${e}</span>`; }
     cargarPerfil();
   </script>
 </body>
