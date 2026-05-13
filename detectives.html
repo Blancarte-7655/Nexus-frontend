@@ -11,6 +11,141 @@
     rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
   <link rel="stylesheet" href="src/css/styles.css">
+  <style>
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .7rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: .25rem;
+    }
+
+    .form-group.full {
+      grid-column: 1/-1;
+    }
+
+    .form-label {
+      font-size: .52rem;
+      color: var(--text3);
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-family: var(--title);
+    }
+
+    .form-input,
+    .form-select {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-bottom: 1px solid var(--cyan3);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: .7rem;
+      padding: .48rem .7rem;
+      outline: none;
+      transition: all .2s;
+      width: 100%;
+    }
+
+    .form-input:focus,
+    .form-select:focus {
+      border-color: var(--cyan);
+      background: rgba(0, 200, 224, .04);
+    }
+
+    .form-select option {
+      background: var(--panel);
+      color: var(--text);
+    }
+
+    .btn-primary {
+      background: transparent;
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      font-family: var(--title);
+      font-size: .72rem;
+      font-weight: 700;
+      padding: .5rem 1.2rem;
+      cursor: pointer;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      transition: all .25s;
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+    }
+
+    .btn-primary:hover {
+      background: var(--cyan);
+      color: var(--bg);
+    }
+
+    .btn-danger {
+      background: transparent;
+      border: 1px solid var(--red);
+      color: var(--red);
+      font-family: var(--title);
+      font-size: .62rem;
+      font-weight: 600;
+      padding: .35rem .8rem;
+      cursor: pointer;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      transition: all .2s;
+      display: inline-flex;
+      align-items: center;
+      gap: .25rem;
+    }
+
+    .btn-danger:hover {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .btn-warn {
+      background: transparent;
+      border: 1px solid var(--amber);
+      color: var(--amber);
+      font-family: var(--title);
+      font-size: .62rem;
+      font-weight: 600;
+      padding: .35rem .8rem;
+      cursor: pointer;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      transition: all .2s;
+      display: inline-flex;
+      align-items: center;
+      gap: .25rem;
+    }
+
+    .btn-warn:hover {
+      background: var(--amber);
+      color: var(--bg);
+    }
+
+    .btn-sm {
+      font-size: .55rem;
+      padding: .28rem .6rem;
+    }
+
+    .form-err {
+      color: #f87171;
+      font-size: .58rem;
+      margin-top: .4rem;
+      font-family: var(--mono);
+    }
+
+    .form-ok {
+      color: #4ade80;
+      font-size: .58rem;
+      margin-top: .4rem;
+      font-family: var(--mono);
+    }
+  </style>
   <script>(function () { const t = sessionStorage.getItem('nexus_theme') || 'dark'; document.documentElement.setAttribute('data-theme', t); })();</script>
 </head>
 
@@ -19,32 +154,34 @@
   <div class="page-hero">
     <div class="hero-tag">MÓDULO DE PERSONAL</div>
     <div class="ph-title">Directorio de <span>Detectives</span></div>
-    <div class="ph-sub" id="ph-sub"></div>
+    <div class="ph-sub" id="ph-sub">Cargando...</div>
   </div>
   <div class="content-area">
     <div class="toolbar">
-      <div class="search-wrap"><i class="ti ti-search search-icon" aria-hidden="true"></i><input class="search-box"
-          id="det-search" placeholder="// buscar nombre, rango o departamento..." oninput="renderGrid()"></div>
+      <div class="search-wrap"><i class="ti ti-search search-icon"></i><input class="search-box" id="det-search"
+          placeholder="// buscar nombre, rango o departamento..." oninput="renderGrid()"></div>
       <button class="flt-btn act" onclick="setFiltro('todos',this)">Todos</button>
       <button class="flt-btn" onclick="setFiltro('Investigador',this)">Investigadores</button>
       <button class="flt-btn" onclick="setFiltro('Analista',this)">Analistas</button>
       <button class="flt-btn" onclick="setFiltro('Capturista',this)">Capturistas</button>
-      <button class="flt-btn" onclick="setFiltro('Administrativo',this)">Administrativos</button>
+      <button class="btn-primary" onclick="abrirFormNuevoDetective()" style="margin-left:auto;">
+        <i class="ti ti-user-plus"></i> Nuevo Detective
+      </button>
     </div>
-    <div style="font-size:.52rem;color:var(--text3);font-family:var(--mono);margin-bottom:.5rem;">// click en una
-      tarjeta para ver casos y próximos movimientos</div>
+    <div style="font-size:.52rem;color:var(--text3);font-family:var(--mono);margin-bottom:.5rem;">// click en tarjeta
+      para ver casos y movimientos</div>
     <div class="det-grid" id="det-grid"></div>
   </div>
+
   <script src="src/js/api.js"></script>
   <script src="src/js/app.js"></script>
   <script>
     initNav('detectives');
-    mostrarLoader('det-grid');
-    let filtroRol = 'todos', todosLosDetectives = [];
+    let filtroRol = 'todos', todosLosDetectives = [], catalogos = null;
 
     async function init() {
       try {
-        todosLosDetectives = await apiGetDetectives();
+        [todosLosDetectives, catalogos] = await Promise.all([apiGetDetectives(), apiGetCatalogos()]);
         document.getElementById('ph-sub').textContent = `${todosLosDetectives.length} agentes en activo · División Metropolitana GDL`;
         renderGrid();
       } catch (e) { mostrarError('det-grid'); }
@@ -59,15 +196,126 @@
       if (q) lista = lista.filter(d => d.nombre.toLowerCase().includes(q) || d.rango.toLowerCase().includes(q) || d.dpto.toLowerCase().includes(q));
       const grid = document.getElementById('det-grid');
       if (!lista.length) { grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text3);font-family:var(--mono);">// sin resultados</div>`; return; }
-      grid.innerHTML = lista.map(d => `<div class="det-card" onclick="abrirDetectiveAPI(${d.id_detective})"><div class="det-card-top"><div class="det-card-av">${ini(d.nombre)}</div><div><div class="det-card-nm">${d.nombre}</div><div class="det-card-user">@${d.username}</div></div></div><div class="det-info-row"><span class="di-lbl">Rango</span><span class="di-val">${d.rango}</span></div><div class="det-info-row"><span class="di-lbl">Departamento</span><span class="di-val">${d.dpto}</span></div><div class="det-info-row"><span class="di-lbl">Rol</span><span class="di-val">${d.rol}</span></div><div class="det-info-row"><span class="di-lbl">Casos activos</span><span class="di-val" style="color:var(--cyan);">${d.casos_activos || 0}</span></div></div>`).join('');
+      grid.innerHTML = lista.map(d => `
+        <div class="det-card" onclick="abrirDetectiveAPI(${d.id_detective})">
+          <div class="det-card-top">
+            <div class="det-card-av">${ini(d.nombre)}</div>
+            <div><div class="det-card-nm">${d.nombre}</div><div class="det-card-user">@${d.username}</div></div>
+          </div>
+          <div class="det-info-row"><span class="di-lbl">Rango</span><span class="di-val">${d.rango}</span></div>
+          <div class="det-info-row"><span class="di-lbl">Departamento</span><span class="di-val">${d.dpto}</span></div>
+          <div class="det-info-row"><span class="di-lbl">Rol</span><span class="di-val">${d.rol}</span></div>
+          <div class="det-info-row"><span class="di-lbl">Casos activos</span><span class="di-val" style="color:var(--cyan);">${d.casos_activos || 0}</span></div>
+          <div style="margin-top:.5rem;display:flex;justify-content:flex-end;" onclick="event.stopPropagation()">
+            <button class="btn-danger btn-sm" onclick="confirmarBaja(${d.id_detective},'${d.nombre.replace(/'/g, "\\'")}')">
+              <i class="ti ti-user-off"></i> Dar de baja
+            </button>
+          </div>
+        </div>`).join('');
     }
 
     async function abrirDetectiveAPI(id) {
       try {
-        const d = await apiGetDetective(id);
-        const casosHTML = d.casos?.length ? d.casos.map(c => `<div class="caso-mini"><span class="case-num">C-${padId(c.id_caso)}</span><span style="font-family:var(--title);font-size:.72rem;font-weight:600;color:var(--white);flex:1;">${c.asunto}</span>${badge(c.estado)}</div>`).join('') : `<div style="font-size:.56rem;color:var(--text3);font-family:var(--mono);">// sin casos asignados</div>`;
-        document.body.insertAdjacentHTML('beforeend', `<div class="side-overlay open" id="side-overlay" onclick="cerrarSidePanel()"></div><div class="side-panel open" id="side-panel"><div class="side-head"><div><div class="side-title">${d.nombre}</div><div style="font-size:.5rem;color:var(--text3);font-family:var(--mono);">@${d.username} · ${d.dpto}</div></div><button class="side-close" onclick="cerrarSidePanel()"><i class="ti ti-x"></i></button></div><div class="side-body"><div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-bottom:1rem;"><div class="info-cell"><div class="info-label">Rango</div><div class="info-value" style="font-size:.62rem;">${d.rango}</div></div><div class="info-cell"><div class="info-label">Rol</div><div class="info-value" style="font-size:.62rem;">${d.rol}</div></div><div class="info-cell"><div class="info-label">Departamento</div><div class="info-value" style="font-size:.62rem;">${d.dpto}</div></div><div class="info-cell"><div class="info-label">Fecha alta</div><div class="info-value" style="font-size:.62rem;">${d.fecha_alta?.split('T')[0] || '—'}</div></div></div><div><div class="modal-section-title">Casos Asignados (${d.casos?.length || 0})</div>${casosHTML}</div></div></div>`);
+        const det = await apiGetDetective(id);
+        const casosHTML = det.casos?.length ? det.casos.map(c => `<div class="caso-mini"><span class="case-num">C-${padId(c.id_caso)}</span><span style="font-family:var(--title);font-size:.72rem;font-weight:600;color:var(--white);flex:1;">${c.asunto}</span><span class="badge b-${c.estado === 'Cerrado' ? 'closed' : c.estado === 'Abierto' ? 'open' : 'inv'}">${c.estado}</span></div>`).join('') : `<div style="font-size:.56rem;color:var(--text3);font-family:var(--mono);">// sin casos asignados</div>`;
+        document.body.insertAdjacentHTML('beforeend', `<div class="side-overlay open" id="side-overlay" onclick="cerrarSidePanel()"></div><div class="side-panel open" id="side-panel"><div class="side-head"><div><div class="side-title">${det.nombre}</div><div style="font-size:.5rem;color:var(--text3);font-family:var(--mono);">@${det.username} · ${det.dpto}</div></div><button class="side-close" onclick="cerrarSidePanel()"><i class="ti ti-x"></i></button></div><div class="side-body"><div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-bottom:1rem;"><div class="info-cell"><div class="info-label">Rango</div><div class="info-value" style="font-size:.62rem;">${det.rango}</div></div><div class="info-cell"><div class="info-label">Rol</div><div class="info-value" style="font-size:.62rem;">${det.rol}</div></div><div class="info-cell"><div class="info-label">Departamento</div><div class="info-value" style="font-size:.62rem;">${det.dpto}</div></div><div class="info-cell"><div class="info-label">Fecha alta</div><div class="info-value" style="font-size:.62rem;">${det.fecha_alta?.split('T')[0] || '—'}</div></div></div><div><div class="modal-section-title">Casos Asignados (${det.casos?.length || 0})</div>${casosHTML}</div></div></div>`);
       } catch (e) { console.error(e); }
+    }
+
+    /* ── FORM NUEVO DETECTIVE ── */
+    function abrirFormNuevoDetective() {
+      const rangos = (catalogos?.rangos || []).map(r => `<option value="${r.id_rango}">${r.nombre_rango}</option>`).join('');
+      const deptos = (catalogos?.departamentos || []).map(d => `<option value="${d.id_dpto}">${d.nombre_dpto}</option>`).join('');
+      document.body.insertAdjacentHTML('beforeend', `
+        <div class="overlay open" id="form-overlay" onclick="cerrarModal('form-overlay','form-modal')">
+          <div class="modal" id="form-modal" onclick="event.stopPropagation()" style="max-width:560px;">
+            <div class="modal-head">
+              <div><div class="modal-title">Nuevo Detective</div><div class="modal-sub">// Registrar agente en el sistema</div></div>
+              <button class="modal-close" onclick="cerrarModal('form-overlay','form-modal')"><i class="ti ti-x"></i></button>
+            </div>
+            <div class="modal-body">
+              <div class="form-grid">
+                <div class="form-group"><label class="form-label">Nombre(s) *</label><input class="form-input" id="fd-nombre" placeholder="Nombre"></div>
+                <div class="form-group"><label class="form-label">Apellido(s) *</label><input class="form-input" id="fd-apellido" placeholder="Apellido"></div>
+                <div class="form-group"><label class="form-label">DNI / Pasaporte *</label><input class="form-input" id="fd-dni" placeholder="DNI123456"></div>
+                <div class="form-group"><label class="form-label">Username *</label><input class="form-input" id="fd-username" placeholder="nombre.apellido"></div>
+                <div class="form-group"><label class="form-label">Contraseña *</label><input class="form-input" id="fd-password" type="password" placeholder="mínimo 6 caracteres"></div>
+                <div class="form-group"><label class="form-label">Rol *</label>
+                  <select class="form-select" id="fd-rol">
+                    <option value="Investigador">Investigador</option>
+                    <option value="Analista">Analista</option>
+                    <option value="Capturista">Capturista</option>
+                    <option value="Administrativo">Administrativo</option>
+                  </select>
+                </div>
+                <div class="form-group"><label class="form-label">Rango *</label><select class="form-select" id="fd-rango"><option value="">-- Seleccionar --</option>${rangos}</select></div>
+                <div class="form-group"><label class="form-label">Departamento *</label><select class="form-select" id="fd-dpto"><option value="">-- Seleccionar --</option>${deptos}</select></div>
+              </div>
+              <div id="form-msg" style="min-height:.8rem;margin-top:.3rem;"></div>
+              <div style="display:flex;justify-content:flex-end;gap:.6rem;margin-top:.8rem;">
+                <button class="btn-warn" onclick="cerrarModal('form-overlay','form-modal')">Cancelar</button>
+                <button class="btn-primary" onclick="guardarNuevoDetective()"><i class="ti ti-device-floppy"></i> Registrar</button>
+              </div>
+            </div>
+          </div>
+        </div>`);
+    }
+
+    async function guardarNuevoDetective() {
+      const payload = {
+        nombre: document.getElementById('fd-nombre').value.trim(),
+        apellido: document.getElementById('fd-apellido').value.trim(),
+        dni_pasaporte: document.getElementById('fd-dni').value.trim(),
+        username: document.getElementById('fd-username').value.trim().toLowerCase(),
+        password: document.getElementById('fd-password').value,
+        rol: document.getElementById('fd-rol').value,
+        id_rango: Number(document.getElementById('fd-rango').value),
+        id_dpto: Number(document.getElementById('fd-dpto').value),
+      };
+      const msg = document.getElementById('form-msg');
+      if (!payload.nombre || !payload.apellido || !payload.dni_pasaporte || !payload.username || !payload.password || !payload.id_rango || !payload.id_dpto) {
+        msg.innerHTML = `<span class="form-err">// Todos los campos son requeridos</span>`; return;
+      }
+      if (payload.password.length < 6) { msg.innerHTML = `<span class="form-err">// La contraseña debe tener al menos 6 caracteres</span>`; return; }
+      msg.innerHTML = `<span style="color:var(--cyan);font-size:.58rem;font-family:var(--mono);">// registrando...</span>`;
+      try {
+        await apiCrearDetective(payload);
+        msg.innerHTML = `<span class="form-ok">// detective registrado correctamente</span>`;
+        todosLosDetectives = await apiGetDetectives();
+        document.getElementById('ph-sub').textContent = `${todosLosDetectives.length} agentes en activo`;
+        renderGrid();
+        setTimeout(() => cerrarModal('form-overlay', 'form-modal'), 800);
+      } catch (e) { msg.innerHTML = `<span class="form-err">// Error: ${e.message}</span>`; }
+    }
+
+    /* ── DAR DE BAJA ── */
+    function confirmarBaja(id, nombre) {
+      document.body.insertAdjacentHTML('beforeend', `
+        <div class="overlay open" id="del-overlay" onclick="cerrarModal('del-overlay','del-modal')">
+          <div class="modal" id="del-modal" onclick="event.stopPropagation()" style="max-width:400px;">
+            <div class="modal-head"><div><div class="modal-title" style="color:#f87171;">Dar de Baja</div></div><button class="modal-close" onclick="cerrarModal('del-overlay','del-modal')"><i class="ti ti-x"></i></button></div>
+            <div class="modal-body">
+              <div style="font-size:.72rem;color:var(--text);line-height:1.6;">¿Dar de baja al agente <b style="color:#f87171;">"${nombre}"</b>?<br><span style="font-size:.62rem;color:var(--text3);">El agente ya no podrá iniciar sesión pero sus casos y registros se conservan.</span></div>
+              <div id="del-msg" style="min-height:.8rem;margin-top:.5rem;"></div>
+              <div style="display:flex;justify-content:flex-end;gap:.6rem;margin-top:1rem;">
+                <button class="btn-primary" onclick="cerrarModal('del-overlay','del-modal')">Cancelar</button>
+                <button class="btn-danger" onclick="ejecutarBaja(${id})"><i class="ti ti-user-off"></i> Confirmar baja</button>
+              </div>
+            </div>
+          </div>
+        </div>`);
+    }
+
+    async function ejecutarBaja(id) {
+      const msg = document.getElementById('del-msg');
+      msg.innerHTML = `<span style="color:var(--cyan);font-size:.58rem;font-family:var(--mono);">// procesando...</span>`;
+      try {
+        await apiFetch(`/detectives/${id}/baja`, { method: 'PUT' });
+        msg.innerHTML = `<span class="form-ok">// agente dado de baja</span>`;
+        todosLosDetectives = await apiGetDetectives();
+        renderGrid();
+        setTimeout(() => cerrarModal('del-overlay', 'del-modal'), 700);
+      } catch (e) { msg.innerHTML = `<span class="form-err">// Error: ${e.message}</span>`; }
     }
 
     init();

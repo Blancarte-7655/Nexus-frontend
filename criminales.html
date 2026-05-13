@@ -11,6 +11,149 @@
     rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
   <link rel="stylesheet" href="src/css/styles.css">
+  <style>
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .7rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: .25rem;
+    }
+
+    .form-group.full {
+      grid-column: 1/-1;
+    }
+
+    .form-label {
+      font-size: .52rem;
+      color: var(--text3);
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-family: var(--title);
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-bottom: 1px solid var(--cyan3);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: .7rem;
+      padding: .48rem .7rem;
+      outline: none;
+      transition: all .2s;
+      width: 100%;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      border-color: var(--cyan);
+      background: rgba(0, 200, 224, .04);
+    }
+
+    .form-select option {
+      background: var(--panel);
+      color: var(--text);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 80px;
+      font-family: var(--cond);
+    }
+
+    .btn-primary {
+      background: transparent;
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      font-family: var(--title);
+      font-size: .72rem;
+      font-weight: 700;
+      padding: .5rem 1.2rem;
+      cursor: pointer;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      transition: all .25s;
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+    }
+
+    .btn-primary:hover {
+      background: var(--cyan);
+      color: var(--bg);
+    }
+
+    .btn-danger {
+      background: transparent;
+      border: 1px solid var(--red);
+      color: var(--red);
+      font-family: var(--title);
+      font-size: .62rem;
+      font-weight: 600;
+      padding: .35rem .8rem;
+      cursor: pointer;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      transition: all .2s;
+      display: inline-flex;
+      align-items: center;
+      gap: .25rem;
+    }
+
+    .btn-danger:hover {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .btn-warn {
+      background: transparent;
+      border: 1px solid var(--amber);
+      color: var(--amber);
+      font-family: var(--title);
+      font-size: .62rem;
+      font-weight: 600;
+      padding: .35rem .8rem;
+      cursor: pointer;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      transition: all .2s;
+      display: inline-flex;
+      align-items: center;
+      gap: .25rem;
+    }
+
+    .btn-warn:hover {
+      background: var(--amber);
+      color: var(--bg);
+    }
+
+    .btn-sm {
+      font-size: .55rem;
+      padding: .28rem .6rem;
+    }
+
+    .form-err {
+      color: #f87171;
+      font-size: .58rem;
+      margin-top: .4rem;
+      font-family: var(--mono);
+    }
+
+    .form-ok {
+      color: #4ade80;
+      font-size: .58rem;
+      margin-top: .4rem;
+      font-family: var(--mono);
+    }
+  </style>
   <script>(function () { const t = sessionStorage.getItem('nexus_theme') || 'dark'; document.documentElement.setAttribute('data-theme', t); })();</script>
 </head>
 
@@ -19,25 +162,28 @@
   <div class="page-hero">
     <div class="hero-tag">// INFORMACIÓN CLASIFICADA</div>
     <div class="ph-title">Registro de <span>Criminales</span></div>
-    <div class="ph-sub" id="ph-sub"></div>
+    <div class="ph-sub" id="ph-sub">Cargando...</div>
   </div>
   <div class="content-area">
     <div class="toolbar">
-      <div class="search-wrap"><i class="ti ti-search search-icon" aria-hidden="true"></i><input class="search-box"
-          id="crim-search" placeholder="// buscar alias, nombre o cargos..." oninput="renderGrid()"></div>
+      <div class="search-wrap"><i class="ti ti-search search-icon"></i><input class="search-box" id="crim-search"
+          placeholder="// buscar alias, nombre o cargos..." oninput="renderGrid()"></div>
       <button class="flt-btn act" onclick="setFiltro('todos',this)">Todos</button>
       <button class="flt-btn" onclick="setFiltro('detenido',this)">Detenidos</button>
       <button class="flt-btn" onclick="setFiltro('activo',this)">Activos</button>
+      <button class="btn-primary" onclick="abrirFormNuevoCriminal()" style="margin-left:auto;">
+        <i class="ti ti-plus"></i> Nuevo Criminal
+      </button>
     </div>
-    <div style="font-size:.52rem;color:var(--text3);font-family:var(--mono);margin-bottom:.5rem;">// click en una
-      tarjeta para ver el expediente completo</div>
+    <div style="font-size:.52rem;color:var(--text3);font-family:var(--mono);margin-bottom:.5rem;">// click en tarjeta
+      para ver expediente completo</div>
     <div class="crim-grid" id="crim-grid"></div>
   </div>
+
   <script src="src/js/api.js"></script>
   <script src="src/js/app.js"></script>
   <script>
     initNav('criminales');
-    mostrarLoader('crim-grid');
     let filtro = 'todos', todosLosCriminales = [];
 
     async function init() {
@@ -59,15 +205,170 @@
       if (q) lista = lista.filter(c => c.alias?.toLowerCase().includes(q) || c.nombre?.toLowerCase().includes(q) || c.cargos?.toLowerCase().includes(q));
       const grid = document.getElementById('crim-grid');
       if (!lista.length) { grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text3);font-family:var(--mono);">// sin resultados</div>`; return; }
-      grid.innerHTML = lista.map(c => `<div class="crim-card ${c.activo ? 'pending' : ''}" onclick="abrirCriminalAPI(${c.id_criminal})"><div class="crim-head"><div><div class="crim-alias">${c.alias || '—'}</div><div class="crim-fullname">${c.nombre}</div></div><div style="text-align:right;"><div class="crim-exp">EXP-${padId(c.id_criminal, 4)}</div><span class="pill ${c.activo ? 'pill-act' : 'pill-cap'}" style="margin-top:.22rem;display:inline-block;">${c.activo ? 'Activo' : 'Detenido'}</span></div></div><div class="crim-charges">${c.cargos || '—'}</div><div class="crim-footer"><span class="crim-condena">Condena: <b>${c.condena}</b></span></div></div>`).join('');
+      grid.innerHTML = lista.map(c => `
+        <div class="crim-card ${c.activo ? 'pending' : ''}" onclick="abrirCriminalAPI(${c.id_criminal})">
+          <div class="crim-head">
+            <div><div class="crim-alias">${c.alias || '—'}</div><div class="crim-fullname">${c.nombre}</div></div>
+            <div style="text-align:right;">
+              <div class="crim-exp">EXP-${padId(c.id_criminal, 4)}</div>
+              <span class="pill ${c.activo ? 'pill-act' : 'pill-cap'}" style="margin-top:.22rem;display:inline-block;">${c.activo ? 'Activo' : 'Detenido'}</span>
+            </div>
+          </div>
+          <div class="crim-charges">${c.cargos || '—'}</div>
+          <div class="crim-footer">
+            <span class="crim-condena">Condena: <b>${c.condena}</b></span>
+            <div onclick="event.stopPropagation()" style="display:flex;gap:.3rem;">
+              <button class="btn-warn btn-sm" onclick="abrirFormEditarCriminal(${c.id_criminal})"><i class="ti ti-edit"></i></button>
+              <button class="btn-danger btn-sm" onclick="confirmarEliminarCriminal(${c.id_criminal},'${(c.alias || c.nombre).replace(/'/g, "\\'")}')"><i class="ti ti-trash"></i></button>
+            </div>
+          </div>
+        </div>`).join('');
     }
 
+    /* ── MODAL DETALLE ── */
     async function abrirCriminalAPI(id) {
       try {
         const cr = await apiGetCriminal(id);
-        const casosHTML = cr.casos?.length ? cr.casos.map(c => `<div class="caso-mini"><span class="case-num">C-${padId(c.id_caso)}</span><span style="font-family:var(--title);font-size:.72rem;font-weight:600;color:var(--white);flex:1;">${c.asunto}</span>${badge(c.estado)}</div>`).join('') : `<div style="font-size:.56rem;color:var(--text3);font-family:var(--mono);">// sin casos vinculados</div>`;
-        document.body.insertAdjacentHTML('beforeend', `<div class="overlay open" id="crim-overlay" onclick="cerrarModal('crim-overlay','crim-modal')"><div class="modal" id="crim-modal" onclick="event.stopPropagation()"><div class="modal-head"><div><div class="modal-title">${cr.alias}</div><div class="modal-sub">EXP-${padId(cr.id_criminal, 4)} · ${cr.nombre}</div></div><button class="modal-close" onclick="cerrarModal('crim-overlay','crim-modal')"><i class="ti ti-x"></i></button></div><div class="modal-body"><div class="info-grid"><div class="info-cell"><div class="info-label">Nombre</div><div class="info-value" style="font-size:.62rem;">${cr.nombre}</div></div><div class="info-cell"><div class="info-label">DNI</div><div class="info-value cyan">${cr.dni || '—'}</div></div><div class="info-cell"><div class="info-label">Condena</div><div class="info-value ${cr.activo ? 'amber' : 'green'}">${cr.condena}</div></div><div class="info-cell"><div class="info-label">Estatus</div><div class="info-value ${cr.activo ? 'amber' : 'green'}">${cr.activo ? 'Activo / Prófugo' : 'Detenido'}</div></div></div><div><div class="modal-section-title">Cargos</div><div style="background:var(--panel);border:1px solid var(--border);border-left:2px solid var(--red);padding:.75rem .9rem;font-size:.65rem;color:var(--text);line-height:1.7;font-style:italic;">${cr.cargos}</div></div><div><div class="modal-section-title">Casos Vinculados (${cr.casos?.length || 0})</div>${casosHTML}</div></div></div></div>`);
+        const casosHTML = cr.casos?.length ? cr.casos.map(c => `<div class="caso-mini"><span class="case-num">C-${padId(c.id_caso)}</span><span style="font-family:var(--title);font-size:.72rem;font-weight:600;color:var(--white);flex:1;">${c.asunto}</span><span class="badge ${badge(cr.estado || c.estado).match(/b-\w+/)?.[0] || 'b-susp'}">${c.estado}</span></div>`).join('') : `<div style="font-size:.56rem;color:var(--text3);font-family:var(--mono);">// sin casos vinculados</div>`;
+        document.body.insertAdjacentHTML('beforeend', `<div class="overlay open" id="crim-overlay" onclick="cerrarModal('crim-overlay','crim-modal')"><div class="modal" id="crim-modal" onclick="event.stopPropagation()"><div class="modal-head"><div><div class="modal-title">${cr.alias}</div><div class="modal-sub">EXP-${padId(cr.id_criminal, 4)} · ${cr.nombre}</div></div><button class="modal-close" onclick="cerrarModal('crim-overlay','crim-modal')"><i class="ti ti-x"></i></button></div><div class="modal-body"><div class="info-grid"><div class="info-cell"><div class="info-label">Nombre</div><div class="info-value" style="font-size:.62rem;">${cr.nombre}</div></div><div class="info-cell"><div class="info-label">DNI</div><div class="info-value cyan">${cr.dni || '—'}</div></div><div class="info-cell"><div class="info-label">Condena</div><div class="info-value ${cr.activo ? 'amber' : 'green'}">${cr.condena}</div></div><div class="info-cell"><div class="info-label">Peligrosidad</div><div class="info-value amber">${cr.nivel_peligrosidad || '—'}</div></div><div class="info-cell"><div class="info-label">Estatus</div><div class="info-value ${cr.activo ? 'amber' : 'green'}">${cr.activo ? 'Activo / Prófugo' : 'Detenido'}</div></div></div><div><div class="modal-section-title">Cargos</div><div style="background:var(--panel);border:1px solid var(--border);border-left:2px solid var(--red);padding:.75rem .9rem;font-size:.65rem;color:var(--text);line-height:1.7;font-style:italic;">${cr.cargos}</div></div><div><div class="modal-section-title">Casos Vinculados (${cr.casos?.length || 0})</div>${casosHTML}</div></div></div></div>`);
       } catch (e) { console.error(e); }
+    }
+    function badge(e) { const m = { 'Abierto': 'b-open', 'En investigación': 'b-inv', 'Cerrado': 'b-closed' }; return `<span class="badge ${m[e] || 'b-susp'}">${e}</span>`; }
+
+    /* ── FORM NUEVO CRIMINAL ── */
+    function abrirFormNuevoCriminal() {
+      document.body.insertAdjacentHTML('beforeend', `
+        <div class="overlay open" id="form-overlay" onclick="cerrarModal('form-overlay','form-modal')">
+          <div class="modal" id="form-modal" onclick="event.stopPropagation()" style="max-width:560px;">
+            <div class="modal-head">
+              <div><div class="modal-title">Nuevo Criminal</div><div class="modal-sub">// Registrar expediente en la base de datos</div></div>
+              <button class="modal-close" onclick="cerrarModal('form-overlay','form-modal')"><i class="ti ti-x"></i></button>
+            </div>
+            <div class="modal-body">
+              <div class="form-grid">
+                <div class="form-group"><label class="form-label">Nombre *</label><input class="form-input" id="fc-nombre" placeholder="Nombre(s)"></div>
+                <div class="form-group"><label class="form-label">Apellido *</label><input class="form-input" id="fc-apellido" placeholder="Apellido(s)"></div>
+                <div class="form-group"><label class="form-label">DNI / Pasaporte *</label><input class="form-input" id="fc-dni" placeholder="DNI123456"></div>
+                <div class="form-group"><label class="form-label">Alias / Apodo</label><input class="form-input" id="fc-apodo" placeholder="El Fantasma"></div>
+                <div class="form-group full"><label class="form-label">Cargos *</label><textarea class="form-textarea" id="fc-cargos" placeholder="// descripción de los cargos criminales"></textarea></div>
+                <div class="form-group"><label class="form-label">Condena</label><input class="form-input" id="fc-condena" placeholder="15 años / Pendiente"></div>
+                <div class="form-group"><label class="form-label">Nivel de peligrosidad</label>
+                  <select class="form-select" id="fc-peligrosidad">
+                    <option value="Bajo">Bajo</option><option value="Medio" selected>Medio</option>
+                    <option value="Alto">Alto</option><option value="Crítico">Crítico</option>
+                  </select>
+                </div>
+              </div>
+              <div id="form-msg" style="min-height:.8rem;margin-top:.3rem;"></div>
+              <div style="display:flex;justify-content:flex-end;gap:.6rem;margin-top:.8rem;">
+                <button class="btn-warn" onclick="cerrarModal('form-overlay','form-modal')">Cancelar</button>
+                <button class="btn-primary" onclick="guardarNuevoCriminal()"><i class="ti ti-device-floppy"></i> Registrar</button>
+              </div>
+            </div>
+          </div>
+        </div>`);
+    }
+
+    async function guardarNuevoCriminal() {
+      const payload = {
+        nombre: document.getElementById('fc-nombre').value.trim(),
+        apellido: document.getElementById('fc-apellido').value.trim(),
+        dni_pasaporte: document.getElementById('fc-dni').value.trim(),
+        apodo: document.getElementById('fc-apodo').value.trim() || null,
+        cargos: document.getElementById('fc-cargos').value.trim(),
+        condena: document.getElementById('fc-condena').value.trim() || 'Pendiente',
+        nivel_peligrosidad: document.getElementById('fc-peligrosidad').value,
+      };
+      const msg = document.getElementById('form-msg');
+      if (!payload.nombre || !payload.apellido || !payload.dni_pasaporte || !payload.cargos) { msg.innerHTML = `<span class="form-err">// Nombre, apellido, DNI y cargos son requeridos</span>`; return; }
+      msg.innerHTML = `<span style="color:var(--cyan);font-size:.58rem;font-family:var(--mono);">// registrando...</span>`;
+      try {
+        await apiCrearCriminal(payload);
+        msg.innerHTML = `<span class="form-ok">// criminal registrado correctamente</span>`;
+        todosLosCriminales = await apiGetCriminales();
+        const activos = todosLosCriminales.filter(c => c.activo).length;
+        document.getElementById('ph-sub').textContent = `${todosLosCriminales.length} expedientes · ${activos} sospechosos activos`;
+        renderGrid();
+        setTimeout(() => cerrarModal('form-overlay', 'form-modal'), 800);
+      } catch (e) { msg.innerHTML = `<span class="form-err">// Error: ${e.message}</span>`; }
+    }
+
+    /* ── FORM EDITAR CRIMINAL ── */
+    async function abrirFormEditarCriminal(id) {
+      const cr = await apiGetCriminal(id);
+      document.body.insertAdjacentHTML('beforeend', `
+        <div class="overlay open" id="edit-overlay" onclick="cerrarModal('edit-overlay','edit-modal')">
+          <div class="modal" id="edit-modal" onclick="event.stopPropagation()" style="max-width:500px;">
+            <div class="modal-head">
+              <div><div class="modal-title">Editar Criminal</div><div class="modal-sub">EXP-${padId(cr.id_criminal, 4)} · ${cr.nombre}</div></div>
+              <button class="modal-close" onclick="cerrarModal('edit-overlay','edit-modal')"><i class="ti ti-x"></i></button>
+            </div>
+            <div class="modal-body">
+              <div class="form-grid">
+                <div class="form-group"><label class="form-label">Alias</label><input class="form-input" id="ec-apodo" value="${cr.alias || ''}"></div>
+                <div class="form-group"><label class="form-label">Condena</label><input class="form-input" id="ec-condena" value="${cr.condena || ''}"></div>
+                <div class="form-group full"><label class="form-label">Cargos</label><textarea class="form-textarea" id="ec-cargos">${cr.cargos || ''}</textarea></div>
+                <div class="form-group"><label class="form-label">Nivel de peligrosidad</label>
+                  <select class="form-select" id="ec-peligrosidad">
+                    ${['Bajo', 'Medio', 'Alto', 'Crítico'].map(n => `<option value="${n}" ${cr.nivel_peligrosidad === n ? 'selected' : ''}>${n}</option>`).join('')}
+                  </select>
+                </div>
+              </div>
+              <div id="edit-msg" style="min-height:.8rem;margin-top:.3rem;"></div>
+              <div style="display:flex;justify-content:flex-end;gap:.6rem;margin-top:.8rem;">
+                <button class="btn-warn" onclick="cerrarModal('edit-overlay','edit-modal')">Cancelar</button>
+                <button class="btn-primary" onclick="guardarEdicionCriminal(${cr.id_criminal})"><i class="ti ti-device-floppy"></i> Guardar</button>
+              </div>
+            </div>
+          </div>
+        </div>`);
+    }
+
+    async function guardarEdicionCriminal(id) {
+      const msg = document.getElementById('edit-msg');
+      msg.innerHTML = `<span style="color:var(--cyan);font-size:.58rem;font-family:var(--mono);">// guardando...</span>`;
+      try {
+        await apiEditarCriminal(id, {
+          apodo: document.getElementById('ec-apodo').value.trim() || null,
+          cargos: document.getElementById('ec-cargos').value.trim(),
+          condena: document.getElementById('ec-condena').value.trim(),
+          nivel_peligrosidad: document.getElementById('ec-peligrosidad').value,
+        });
+        msg.innerHTML = `<span class="form-ok">// actualizado correctamente</span>`;
+        todosLosCriminales = await apiGetCriminales();
+        renderGrid();
+        setTimeout(() => cerrarModal('edit-overlay', 'edit-modal'), 800);
+      } catch (e) { msg.innerHTML = `<span class="form-err">// Error: ${e.message}</span>`; }
+    }
+
+    /* ── ELIMINAR ── */
+    function confirmarEliminarCriminal(id, nombre) {
+      document.body.insertAdjacentHTML('beforeend', `
+        <div class="overlay open" id="del-overlay" onclick="cerrarModal('del-overlay','del-modal')">
+          <div class="modal" id="del-modal" onclick="event.stopPropagation()" style="max-width:400px;">
+            <div class="modal-head"><div><div class="modal-title" style="color:#f87171;">Eliminar Criminal</div></div><button class="modal-close" onclick="cerrarModal('del-overlay','del-modal')"><i class="ti ti-x"></i></button></div>
+            <div class="modal-body">
+              <div style="font-size:.72rem;color:var(--text);line-height:1.6;">¿Eliminar el expediente de <b style="color:#f87171;">"${nombre}"</b>?<br><span style="font-size:.62rem;color:var(--text3);">No se puede deshacer.</span></div>
+              <div id="del-msg" style="min-height:.8rem;margin-top:.5rem;"></div>
+              <div style="display:flex;justify-content:flex-end;gap:.6rem;margin-top:1rem;">
+                <button class="btn-primary" onclick="cerrarModal('del-overlay','del-modal')">Cancelar</button>
+                <button class="btn-danger" onclick="ejecutarEliminarCriminal(${id})"><i class="ti ti-trash"></i> Eliminar</button>
+              </div>
+            </div>
+          </div>
+        </div>`);
+    }
+
+    async function ejecutarEliminarCriminal(id) {
+      const msg = document.getElementById('del-msg');
+      msg.innerHTML = `<span style="color:var(--cyan);font-size:.58rem;font-family:var(--mono);">// eliminando...</span>`;
+      try {
+        await apiEliminarCriminal(id);
+        msg.innerHTML = `<span class="form-ok">// eliminado</span>`;
+        todosLosCriminales = await apiGetCriminales();
+        renderGrid();
+        setTimeout(() => cerrarModal('del-overlay', 'del-modal'), 700);
+      } catch (e) { msg.innerHTML = `<span class="form-err">// Error: ${e.message}</span>`; }
     }
 
     init();

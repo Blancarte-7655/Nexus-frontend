@@ -11,16 +11,191 @@
     rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
   <link rel="stylesheet" href="src/css/styles.css">
-  <script>(function () { const t = sessionStorage.getItem('nexus_theme') || 'dark'; document.documentElement.setAttribute('data-theme', t); })();</script>
   <style>
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: .25rem;
+      margin-bottom: .65rem;
+    }
+
+    .form-label {
+      font-size: .52rem;
+      color: var(--text3);
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-family: var(--title);
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-bottom: 1px solid var(--cyan3);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: .7rem;
+      padding: .48rem .7rem;
+      outline: none;
+      transition: all .2s;
+      width: 100%;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      border-color: var(--cyan);
+      background: rgba(0, 200, 224, .04);
+    }
+
+    .form-select option {
+      background: var(--panel);
+      color: var(--text);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 70px;
+      font-family: var(--cond);
+    }
+
+    .btn-primary {
+      background: transparent;
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      font-family: var(--title);
+      font-size: .72rem;
+      font-weight: 700;
+      padding: .5rem 1.2rem;
+      cursor: pointer;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      transition: all .25s;
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+    }
+
+    .btn-primary:hover {
+      background: var(--cyan);
+      color: var(--bg);
+    }
+
+    .btn-danger {
+      background: transparent;
+      border: 1px solid var(--red);
+      color: var(--red);
+      font-family: var(--title);
+      font-size: .62rem;
+      font-weight: 600;
+      padding: .28rem .6rem;
+      cursor: pointer;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      transition: all .2s;
+      display: inline-flex;
+      align-items: center;
+      gap: .25rem;
+    }
+
+    .btn-danger:hover {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .btn-warn {
+      background: transparent;
+      border: 1px solid var(--amber);
+      color: var(--amber);
+      font-family: var(--title);
+      font-size: .62rem;
+      font-weight: 600;
+      padding: .35rem .8rem;
+      cursor: pointer;
+      transition: all .2s;
+      display: inline-flex;
+      align-items: center;
+      gap: .25rem;
+    }
+
+    .btn-warn:hover {
+      background: var(--amber);
+      color: var(--bg);
+    }
+
+    .form-err {
+      color: #f87171;
+      font-size: .58rem;
+      font-family: var(--mono);
+    }
+
+    .form-ok {
+      color: #4ade80;
+      font-size: .58rem;
+      font-family: var(--mono);
+    }
+
+    .file-drop {
+      border: 1px dashed var(--cyan3);
+      padding: 1.2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s;
+      background: rgba(0, 200, 224, .03);
+    }
+
+    .file-drop:hover {
+      border-color: var(--cyan);
+      background: rgba(0, 200, 224, .07);
+    }
+
+    .file-drop.has-file {
+      border-color: var(--green);
+      background: rgba(34, 197, 94, .05);
+    }
+
+    .file-name {
+      font-size: .62rem;
+      color: var(--green);
+      font-family: var(--mono);
+      margin-top: .3rem;
+    }
+
     .grupo-body {
       margin-bottom: .9rem;
     }
 
     .grupo-body .evid-item {
-      margin-left: 1rem;
+      margin-left: .5rem;
+    }
+
+    .evid-item {
+      position: relative;
+    }
+
+    .evid-del {
+      position: absolute;
+      top: .4rem;
+      right: .4rem;
+      background: transparent;
+      border: none;
+      color: var(--text3);
+      cursor: pointer;
+      font-size: .9rem;
+      opacity: 0;
+      transition: opacity .2s;
+    }
+
+    .evid-item:hover .evid-del {
+      opacity: 1;
+    }
+
+    .evid-del:hover {
+      color: var(--red);
     }
   </style>
+  <script>(function () { const t = sessionStorage.getItem('nexus_theme') || 'dark'; document.documentElement.setAttribute('data-theme', t); })();</script>
 </head>
 
 <body>
@@ -28,37 +203,37 @@
   <div class="page-hero">
     <div class="hero-tag">// CADENA DE CUSTODIA</div>
     <div class="ph-title">Bóveda de <span>Evidencias</span></div>
-    <div class="ph-sub" id="ph-sub"></div>
+    <div class="ph-sub" id="ph-sub">Cargando...</div>
   </div>
   <div class="content-area">
     <div class="toolbar">
-      <div class="search-wrap"><i class="ti ti-search search-icon" aria-hidden="true"></i><input class="search-box"
-          id="evid-search" placeholder="// buscar descripción, tipo o caso..." oninput="renderLista()"></div>
+      <div class="search-wrap"><i class="ti ti-search search-icon"></i><input class="search-box" id="evid-search"
+          placeholder="// buscar descripción, tipo o caso..." oninput="renderLista()"></div>
       <button class="flt-btn act" onclick="setFiltro('todos',this)">Todos</button>
       <button class="flt-btn" onclick="setFiltro('Fotografía',this)">Fotos</button>
       <button class="flt-btn" onclick="setFiltro('Video',this)">Videos</button>
-      <button class="flt-btn" onclick="setFiltro('Digital',this)">Digitales</button>
+      <button class="flt-btn" onclick="setFiltro('Digital',this)">Digital</button>
       <button class="flt-btn" onclick="setFiltro('Documento',this)">Docs</button>
-      <button class="flt-btn" onclick="setFiltro('Objeto',this)">Objetos</button>
       <div style="display:flex;gap:.4rem;">
-        <button class="vista-btn act" onclick="setVista('lista',this)"><i class="ti ti-list" aria-hidden="true"></i>
-          Lista</button>
-        <button class="vista-btn" onclick="setVista('caso',this)"><i class="ti ti-folder" aria-hidden="true"></i> Por
-          caso</button>
+        <button class="vista-btn act" onclick="setVista('lista',this)"><i class="ti ti-list"></i> Lista</button>
+        <button class="vista-btn" onclick="setVista('caso',this)"><i class="ti ti-folder"></i> Por caso</button>
       </div>
+      <button class="btn-primary" onclick="abrirFormNuevaEvidencia()">
+        <i class="ti ti-upload"></i> Nueva Evidencia
+      </button>
     </div>
     <div id="evid-container"></div>
   </div>
+
   <script src="src/js/api.js"></script>
   <script src="src/js/app.js"></script>
   <script>
     initNav('evidencias');
-    mostrarLoader('evid-container');
-    let filtroTipo = 'todos', vista = 'lista', todasLasEvidencias = [];
+    let filtroTipo = 'todos', vista = 'lista', todasLasEvidencias = [], catalogos = null;
 
     async function init() {
       try {
-        todasLasEvidencias = await apiGetEvidencias();
+        [todasLasEvidencias, catalogos] = await Promise.all([apiGetEvidencias(), apiGetCatalogos()]);
         document.getElementById('ph-sub').textContent = `${todasLasEvidencias.length} registros · Acceso restringido · División Metropolitana GDL`;
         renderLista();
       } catch (e) { mostrarError('evid-container'); }
@@ -68,7 +243,22 @@
     function setVista(v, btn) { vista = v; document.querySelectorAll('.vista-btn').forEach(b => b.classList.remove('act')); btn.classList.add('act'); renderLista(); }
 
     function evRow(e) {
-      return `<div class="evid-item"><div class="evid-icon"><i class="ti ${evIconClass(e.tipo)}" aria-hidden="true"></i></div><div style="flex:1;"><div class="evid-type">${e.tipo}</div><div class="evid-desc">${e.descripcion}</div>${e.ruta_archivo ? `<div class="evid-path">${e.ruta_archivo}</div>` : `<div class="evid-nofile">// evidencia física</div>`}</div><div class="evid-right"><div class="evid-caso">C-${padId(e.id_caso)}</div><div class="evid-det">${e.detective || '—'}</div><div class="evid-id">EV-${padId(e.id_evidencia, 4)}</div><div style="font-size:.44rem;color:var(--text3);font-family:var(--mono);margin-top:.1rem;">${e.fecha_registro?.split('T')[0] || ''}</div></div></div>`;
+      const previewBtn = e.ruta_archivo ? `<a href="http://localhost:3001/api${e.ruta_archivo}" target="_blank" style="font-size:.44rem;color:var(--cyan);font-family:var(--mono);display:block;margin-top:.1rem;">📎 Ver archivo</a>` : '';
+      return `<div class="evid-item">
+        <button class="evid-del" onclick="confirmarEliminarEvidencia(${e.id_evidencia})" title="Eliminar"><i class="ti ti-trash"></i></button>
+        <div class="evid-icon"><i class="ti ${evIconClass(e.tipo)}"></i></div>
+        <div style="flex:1;">
+          <div class="evid-type">${e.tipo}</div>
+          <div class="evid-desc">${e.descripcion}</div>
+          ${e.ruta_archivo ? `<div class="evid-path">${e.ruta_archivo}</div>${previewBtn}` : `<div class="evid-nofile">// evidencia física</div>`}
+        </div>
+        <div class="evid-right">
+          <div class="evid-caso">C-${padId(e.id_caso)}</div>
+          <div class="evid-det">${e.detective || '—'}</div>
+          <div class="evid-id">EV-${padId(e.id_evidencia, 4)}</div>
+          <div style="font-size:.44rem;color:var(--text3);font-family:var(--mono);margin-top:.1rem;">${e.fecha_registro?.split('T')[0] || ''}</div>
+        </div>
+      </div>`;
     }
 
     function renderLista() {
@@ -79,15 +269,126 @@
       const cont = document.getElementById('evid-container');
       if (!lista.length) { cont.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--text3);font-family:var(--mono);">// sin resultados</div>`; return; }
       if (vista === 'lista') { cont.innerHTML = `<div class="evid-list">${lista.map(evRow).join('')}</div>`; return; }
-      // Vista por caso
-      const grupos = {};
-      lista.forEach(e => { if (!grupos[e.id_caso]) grupos[e.id_caso] = []; grupos[e.id_caso].push(e); });
+      const grupos = {}; lista.forEach(e => { if (!grupos[e.id_caso]) grupos[e.id_caso] = []; grupos[e.id_caso].push(e); });
       const ids = Object.keys(grupos).map(Number).sort((a, b) => a - b);
       cont.innerHTML = ids.map(cid => {
-        const evids = grupos[cid];
-        const nombre = evids[0]?.caso_asunto || 'Caso ' + cid;
-        return `<div class="grupo-body"><div class="grupo-header" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'flex':'none';this.nextElementSibling.style.flexDirection='column'"><div><span style="font-family:var(--mono);font-size:.5rem;color:var(--text3);margin-right:.5rem;">C-${padId(cid)}</span><span class="grupo-title">${nombre}</span></div><div style="display:flex;align-items:center;gap:.8rem;"><span class="grupo-count">${evids.length} evidencia(s)</span><i class="ti ti-chevron-down" style="color:var(--cyan);font-size:.8rem;"></i></div></div><div class="evid-list" style="padding-left:.5rem;">${evids.map(evRow).join('')}</div></div>`;
+        const evids = grupos[cid]; const nombre = evids[0]?.caso_asunto || 'Caso ' + cid;
+        return `<div class="grupo-body"><div class="grupo-header" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'flex':'none';this.nextElementSibling.style.flexDirection='column'">
+          <div><span style="font-family:var(--mono);font-size:.5rem;color:var(--text3);margin-right:.5rem;">C-${padId(cid)}</span><span class="grupo-title">${nombre}</span></div>
+          <div style="display:flex;align-items:center;gap:.8rem;"><span class="grupo-count">${evids.length} evidencia(s)</span><i class="ti ti-chevron-down" style="color:var(--cyan);font-size:.8rem;"></i></div>
+        </div><div class="evid-list" style="padding-left:.5rem;">${evids.map(evRow).join('')}</div></div>`;
       }).join('');
+    }
+
+    /* ── FORM NUEVA EVIDENCIA ── */
+    function abrirFormNuevaEvidencia() {
+      const casos = (catalogos?.detectives || []);
+      // Usamos el endpoint de casos del catálogo
+      apiFetch('/casos').then(data => {
+        const casosOpts = (data.data || []).map(c => `<option value="${c.id_caso}">C-${padId(c.id_caso)} · ${c.asunto}</option>`).join('');
+        document.body.insertAdjacentHTML('beforeend', `
+          <div class="overlay open" id="form-overlay" onclick="cerrarModal('form-overlay','form-modal')">
+            <div class="modal" id="form-modal" onclick="event.stopPropagation()" style="max-width:480px;">
+              <div class="modal-head">
+                <div><div class="modal-title">Nueva Evidencia</div><div class="modal-sub">// Registrar en cadena de custodia</div></div>
+                <button class="modal-close" onclick="cerrarModal('form-overlay','form-modal')"><i class="ti ti-x"></i></button>
+              </div>
+              <div class="modal-body">
+                <div class="form-group">
+                  <label class="form-label">Caso vinculado *</label>
+                  <select class="form-select" id="fe-caso"><option value="">-- Seleccionar caso --</option>${casosOpts}</select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Tipo *</label>
+                  <select class="form-select" id="fe-tipo">
+                    <option value="Fotografía">Fotografía</option>
+                    <option value="Video">Video</option>
+                    <option value="Documento">Documento</option>
+                    <option value="Digital">Digital</option>
+                    <option value="Objeto">Objeto</option>
+                    <option value="Otro">Otro</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Descripción *</label>
+                  <textarea class="form-textarea" id="fe-desc" placeholder="// descripción detallada de la evidencia"></textarea>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Archivo (PDF, imagen, video — máx. 50MB)</label>
+                  <div class="file-drop" id="fe-drop" onclick="document.getElementById('fe-archivo').click()">
+                    <i class="ti ti-cloud-upload" style="font-size:1.5rem;color:var(--cyan3);display:block;margin-bottom:.3rem;"></i>
+                    <span style="font-size:.62rem;color:var(--text3);">Click para seleccionar archivo o arrastrar aquí</span>
+                    <div class="file-name" id="fe-filename"></div>
+                  </div>
+                  <input type="file" id="fe-archivo" accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.mp4,.mov,.zip,.doc,.docx" style="display:none" onchange="mostrarArchivo(this)">
+                </div>
+                <div id="form-msg" style="min-height:.8rem;"></div>
+                <div style="display:flex;justify-content:flex-end;gap:.6rem;margin-top:.5rem;">
+                  <button class="btn-warn" onclick="cerrarModal('form-overlay','form-modal')">Cancelar</button>
+                  <button class="btn-primary" onclick="guardarNuevaEvidencia()"><i class="ti ti-upload"></i> Registrar</button>
+                </div>
+              </div>
+            </div>
+          </div>`);
+      });
+    }
+
+    function mostrarArchivo(input) {
+      const file = input.files[0];
+      if (file) {
+        document.getElementById('fe-filename').textContent = `📎 ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+        document.getElementById('fe-drop').classList.add('has-file');
+      }
+    }
+
+    async function guardarNuevaEvidencia() {
+      const caso = document.getElementById('fe-caso').value;
+      const tipo = document.getElementById('fe-tipo').value;
+      const desc = document.getElementById('fe-desc').value.trim();
+      const fileInput = document.getElementById('fe-archivo');
+      const archivo = fileInput.files[0] || null;
+      const msg = document.getElementById('form-msg');
+      if (!caso || !tipo || !desc) { msg.innerHTML = `<span class="form-err">// Caso, tipo y descripción son requeridos</span>`; return; }
+      msg.innerHTML = `<span style="color:var(--cyan);font-size:.58rem;font-family:var(--mono);">// ${archivo ? 'subiendo archivo...' : 'registrando...'}</span>`;
+      try {
+        await apiCrearEvidencia(Number(caso), tipo, desc, archivo);
+        msg.innerHTML = `<span class="form-ok">// evidencia registrada correctamente</span>`;
+        todasLasEvidencias = await apiGetEvidencias();
+        document.getElementById('ph-sub').textContent = `${todasLasEvidencias.length} registros · Acceso restringido`;
+        renderLista();
+        setTimeout(() => cerrarModal('form-overlay', 'form-modal'), 800);
+      } catch (e) { msg.innerHTML = `<span class="form-err">// Error: ${e.message}</span>`; }
+    }
+
+    /* ── ELIMINAR EVIDENCIA ── */
+    function confirmarEliminarEvidencia(id) {
+      document.body.insertAdjacentHTML('beforeend', `
+        <div class="overlay open" id="del-overlay" onclick="cerrarModal('del-overlay','del-modal')">
+          <div class="modal" id="del-modal" onclick="event.stopPropagation()" style="max-width:380px;">
+            <div class="modal-head"><div><div class="modal-title" style="color:#f87171;">Eliminar Evidencia</div></div><button class="modal-close" onclick="cerrarModal('del-overlay','del-modal')"><i class="ti ti-x"></i></button></div>
+            <div class="modal-body">
+              <div style="font-size:.72rem;color:var(--text);line-height:1.6;">¿Eliminar la evidencia <b style="color:#f87171;">EV-${padId(id, 4)}</b>?<br><span style="font-size:.62rem;color:var(--text3);">Si tiene archivo físico también se eliminará del servidor.</span></div>
+              <div id="del-msg" style="min-height:.8rem;margin-top:.5rem;"></div>
+              <div style="display:flex;justify-content:flex-end;gap:.6rem;margin-top:1rem;">
+                <button class="btn-primary" onclick="cerrarModal('del-overlay','del-modal')">Cancelar</button>
+                <button class="btn-danger" onclick="ejecutarEliminarEvidencia(${id})"><i class="ti ti-trash"></i> Eliminar</button>
+              </div>
+            </div>
+          </div>
+        </div>`);
+    }
+
+    async function ejecutarEliminarEvidencia(id) {
+      const msg = document.getElementById('del-msg');
+      msg.innerHTML = `<span style="color:var(--cyan);font-size:.58rem;font-family:var(--mono);">// eliminando...</span>`;
+      try {
+        await apiEliminarEvidencia(id);
+        msg.innerHTML = `<span class="form-ok">// evidencia eliminada</span>`;
+        todasLasEvidencias = await apiGetEvidencias();
+        document.getElementById('ph-sub').textContent = `${todasLasEvidencias.length} registros`;
+        renderLista();
+        setTimeout(() => cerrarModal('del-overlay', 'del-modal'), 700);
+      } catch (e) { msg.innerHTML = `<span class="form-err">// Error: ${e.message}</span>`; }
     }
 
     init();
