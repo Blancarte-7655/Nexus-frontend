@@ -135,14 +135,12 @@
     .form-err {
       color: #f87171;
       font-size: .58rem;
-      margin-top: .4rem;
       font-family: var(--mono);
     }
 
     .form-ok {
       color: #4ade80;
       font-size: .58rem;
-      margin-top: .4rem;
       font-family: var(--mono);
     }
   </style>
@@ -169,7 +167,7 @@
       </button>
     </div>
     <div style="font-size:.52rem;color:var(--text3);font-family:var(--mono);margin-bottom:.5rem;">// click en tarjeta
-      para ver casos y movimientos</div>
+      para ver info y dar de baja</div>
     <div class="det-grid" id="det-grid"></div>
   </div>
 
@@ -187,7 +185,12 @@
       } catch (e) { mostrarError('det-grid'); }
     }
 
-    function setFiltro(f, btn) { filtroRol = f; document.querySelectorAll('.flt-btn').forEach(b => b.classList.remove('act')); btn.classList.add('act'); renderGrid(); }
+    function setFiltro(f, btn) {
+      filtroRol = f;
+      document.querySelectorAll('.flt-btn').forEach(b => b.classList.remove('act'));
+      btn.classList.add('act');
+      renderGrid();
+    }
 
     function renderGrid() {
       const q = document.getElementById('det-search').value.toLowerCase();
@@ -195,7 +198,10 @@
       if (filtroRol !== 'todos') lista = lista.filter(d => d.rol === filtroRol);
       if (q) lista = lista.filter(d => d.nombre.toLowerCase().includes(q) || d.rango.toLowerCase().includes(q) || d.dpto.toLowerCase().includes(q));
       const grid = document.getElementById('det-grid');
-      if (!lista.length) { grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text3);font-family:var(--mono);">// sin resultados</div>`; return; }
+      if (!lista.length) {
+        grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text3);font-family:var(--mono);">// sin resultados</div>`;
+        return;
+      }
       grid.innerHTML = lista.map(d => `
         <div class="det-card" onclick="abrirDetectiveAPI(${d.id_detective})">
           <div class="det-card-top">
@@ -206,19 +212,56 @@
           <div class="det-info-row"><span class="di-lbl">Departamento</span><span class="di-val">${d.dpto}</span></div>
           <div class="det-info-row"><span class="di-lbl">Rol</span><span class="di-val">${d.rol}</span></div>
           <div class="det-info-row"><span class="di-lbl">Casos activos</span><span class="di-val" style="color:var(--cyan);">${d.casos_activos || 0}</span></div>
-          <div style="margin-top:.5rem;display:flex;justify-content:flex-end;" onclick="event.stopPropagation()">
-            <button class="btn-danger btn-sm" onclick="confirmarBaja(${d.id_detective},'${d.nombre.replace(/'/g, "\\'")}')">
-              <i class="ti ti-user-off"></i> Dar de baja
-            </button>
-          </div>
         </div>`).join('');
     }
 
     async function abrirDetectiveAPI(id) {
       try {
         const det = await apiGetDetective(id);
-        const casosHTML = det.casos?.length ? det.casos.map(c => `<div class="caso-mini"><span class="case-num">C-${padId(c.id_caso)}</span><span style="font-family:var(--title);font-size:.72rem;font-weight:600;color:var(--white);flex:1;">${c.asunto}</span><span class="badge b-${c.estado === 'Cerrado' ? 'closed' : c.estado === 'Abierto' ? 'open' : 'inv'}">${c.estado}</span></div>`).join('') : `<div style="font-size:.56rem;color:var(--text3);font-family:var(--mono);">// sin casos asignados</div>`;
-        document.body.insertAdjacentHTML('beforeend', `<div class="side-overlay open" id="side-overlay" onclick="cerrarSidePanel()"></div><div class="side-panel open" id="side-panel"><div class="side-head"><div><div class="side-title">${det.nombre}</div><div style="font-size:.5rem;color:var(--text3);font-family:var(--mono);">@${det.username} · ${det.dpto}</div></div><button class="side-close" onclick="cerrarSidePanel()"><i class="ti ti-x"></i></button></div><div class="side-body"><div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-bottom:1rem;"><div class="info-cell"><div class="info-label">Rango</div><div class="info-value" style="font-size:.62rem;">${det.rango}</div></div><div class="info-cell"><div class="info-label">Rol</div><div class="info-value" style="font-size:.62rem;">${det.rol}</div></div><div class="info-cell"><div class="info-label">Departamento</div><div class="info-value" style="font-size:.62rem;">${det.dpto}</div></div><div class="info-cell"><div class="info-label">Fecha alta</div><div class="info-value" style="font-size:.62rem;">${det.fecha_alta?.split('T')[0] || '—'}</div></div></div><div><div class="modal-section-title">Casos Asignados (${det.casos?.length || 0})</div>${casosHTML}</div></div></div>`);
+        const casosHTML = det.casos?.length
+          ? det.casos.map(c => `
+              <div class="caso-mini">
+                <span class="case-num">C-${padId(c.id_caso)}</span>
+                <span style="font-family:var(--title);font-size:.72rem;font-weight:600;color:var(--white);flex:1;">${c.asunto}</span>
+                <span class="badge b-${c.estado === 'Cerrado' ? 'closed' : c.estado === 'Abierto' ? 'open' : 'inv'}">${c.estado}</span>
+              </div>`).join('')
+          : `<div style="font-size:.56rem;color:var(--text3);font-family:var(--mono);">// sin casos asignados</div>`;
+
+        document.body.insertAdjacentHTML('beforeend', `
+          <div class="side-overlay open" id="side-overlay" onclick="cerrarSidePanel()"></div>
+          <div class="side-panel open" id="side-panel">
+            <div class="side-head">
+              <div>
+                <div class="side-title">${det.nombre}</div>
+                <div style="font-size:.5rem;color:var(--text3);font-family:var(--mono);">@${det.username} · ${det.dpto}</div>
+              </div>
+              <button class="side-close" onclick="cerrarSidePanel()"><i class="ti ti-x"></i></button>
+            </div>
+            <div class="side-body">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-bottom:1rem;">
+                <div class="info-cell"><div class="info-label">Rango</div><div class="info-value" style="font-size:.62rem;">${det.rango}</div></div>
+                <div class="info-cell"><div class="info-label">Rol</div><div class="info-value" style="font-size:.62rem;">${det.rol}</div></div>
+                <div class="info-cell"><div class="info-label">Departamento</div><div class="info-value" style="font-size:.62rem;">${det.dpto}</div></div>
+                <div class="info-cell"><div class="info-label">Fecha alta</div><div class="info-value" style="font-size:.62rem;">${det.fecha_alta?.split('T')[0] || '—'}</div></div>
+              </div>
+              <div style="margin-bottom:1rem;">
+                <div class="modal-section-title">Casos Asignados (${det.casos?.length || 0})</div>
+                ${casosHTML}
+              </div>
+              <div style="padding-top:.8rem;border-top:1px solid var(--border);">
+                <button class="btn-danger" id="btn-baja-${det.id_detective}" style="width:100%;justify-content:center;">
+                  <i class="ti ti-user-off"></i> Dar de baja al agente
+                </button>
+              </div>
+            </div>
+          </div>`);
+
+        // Asignar evento al botón de baja DESPUÉS de insertarlo en el DOM
+        document.getElementById('btn-baja-' + det.id_detective).addEventListener('click', function () {
+          cerrarSidePanel();
+          setTimeout(() => confirmarBaja(det.id_detective, det.nombre), 200);
+        });
+
       } catch (e) { console.error(e); }
     }
 
@@ -288,22 +331,30 @@
       } catch (e) { msg.innerHTML = `<span class="form-err">// Error: ${e.message}</span>`; }
     }
 
-    /* ── DAR DE BAJA ── */
+    /* ── CONFIRMAR BAJA ── */
     function confirmarBaja(id, nombre) {
       document.body.insertAdjacentHTML('beforeend', `
         <div class="overlay open" id="del-overlay" onclick="cerrarModal('del-overlay','del-modal')">
           <div class="modal" id="del-modal" onclick="event.stopPropagation()" style="max-width:400px;">
-            <div class="modal-head"><div><div class="modal-title" style="color:#f87171;">Dar de Baja</div></div><button class="modal-close" onclick="cerrarModal('del-overlay','del-modal')"><i class="ti ti-x"></i></button></div>
+            <div class="modal-head">
+              <div><div class="modal-title" style="color:#f87171;">Dar de Baja</div></div>
+              <button class="modal-close" onclick="cerrarModal('del-overlay','del-modal')"><i class="ti ti-x"></i></button>
+            </div>
             <div class="modal-body">
-              <div style="font-size:.72rem;color:var(--text);line-height:1.6;">¿Dar de baja al agente <b style="color:#f87171;">"${nombre}"</b>?<br><span style="font-size:.62rem;color:var(--text3);">El agente ya no podrá iniciar sesión pero sus casos y registros se conservan.</span></div>
+              <div style="font-size:.72rem;color:var(--text);line-height:1.6;">
+                ¿Dar de baja al agente <b style="color:#f87171;">"${nombre}"</b>?<br>
+                <span style="font-size:.62rem;color:var(--text3);">El agente ya no podrá iniciar sesión pero sus casos y registros se conservan.</span>
+              </div>
               <div id="del-msg" style="min-height:.8rem;margin-top:.5rem;"></div>
               <div style="display:flex;justify-content:flex-end;gap:.6rem;margin-top:1rem;">
                 <button class="btn-primary" onclick="cerrarModal('del-overlay','del-modal')">Cancelar</button>
-                <button class="btn-danger" onclick="ejecutarBaja(${id})"><i class="ti ti-user-off"></i> Confirmar baja</button>
+                <button class="btn-danger" id="btn-confirmar-baja"><i class="ti ti-user-off"></i> Confirmar baja</button>
               </div>
             </div>
           </div>
         </div>`);
+
+      document.getElementById('btn-confirmar-baja').addEventListener('click', () => ejecutarBaja(id));
     }
 
     async function ejecutarBaja(id) {
