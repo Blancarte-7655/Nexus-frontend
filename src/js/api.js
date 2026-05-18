@@ -3,7 +3,7 @@
    Versión con CRUD completo
    ===================================================== */
 
-const API_URL = 'http://localhost:3001/api';
+const API_URL = 'https://nexus-backend-production-40d9.up.railway.app/api';
 
 /* --------------------------------------------------
    Helpers de fetch
